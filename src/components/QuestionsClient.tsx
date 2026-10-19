@@ -6,6 +6,7 @@ import type { OpenQuestion, QuestionType } from "@/data/types";
 import { VENDOR_IDS, VENDOR_META, SCOPE_LABEL } from "@/data/vendor-meta";
 import type { ResolvedRef } from "@/lib/refs";
 import { Pill, SourceChips, VendorDot } from "./ui";
+import { tr } from "@/lib/i18n";
 
 type Item = OpenQuestion & { refs: ResolvedRef[] };
 
@@ -41,52 +42,52 @@ export function QuestionsClient({ items, themes, initialScope, initialQuery }: {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
-      <aside className="no-print space-y-6 lg:sticky lg:top-8 lg:self-start">
+      <aside data-tour="q-filters" className="no-print space-y-6 lg:sticky lg:top-8 lg:self-start">
         <div>
-          <label htmlFor="qs" className="text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Rechercher</label>
-          <input id="qs" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Mot-clé…" className="mt-2 w-full rounded-lg border border-paper-line bg-white px-3 py-2 text-[14px] outline-none focus:border-ink-faint" />
+          <label htmlFor="qs" className="text-[12px] font-semibold uppercase tracking-wide text-ink-mute">{tr("Rechercher")}</label>
+          <input id="qs" value={q} onChange={(e) => setQ(e.target.value)} placeholder={tr("Mot-clé…")} className="mt-2 w-full rounded-lg border border-paper-line bg-white px-3 py-2 text-[14px] outline-none focus:border-ink-faint" />
         </div>
         <div>
-          <div className="text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Proposition</div>
+          <div className="text-[12px] font-semibold uppercase tracking-wide text-ink-mute">{tr("Proposition")}</div>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <button className={chip(scope === "all")} onClick={() => setScope("all")}>Toutes</button>
+            <button className={chip(scope === "all")} onClick={() => setScope("all")}>{tr("Toutes")}</button>
             {VENDOR_IDS.map((v) => (
               <button key={v} className={clsx(chip(scope === v), "inline-flex items-center gap-1.5")} onClick={() => setScope(v)}><VendorDot id={v} size={7} />{VENDOR_META[v].short}</button>
             ))}
-            <button className={chip(scope === "transversal")} onClick={() => setScope("transversal")}>Transversal</button>
+            <button className={chip(scope === "transversal")} onClick={() => setScope("transversal")}>{tr("Transversal")}</button>
           </div>
         </div>
         <div>
-          <div className="text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Type</div>
+          <div className="text-[12px] font-semibold uppercase tracking-wide text-ink-mute">{tr("Type")}</div>
           <div className="mt-2 flex flex-col gap-1.5">
             {(["all", "soulevee", "vigilance", "contradiction"] as const).map((t) => (
               <button key={t} className={clsx(chip(type === t), "text-left")} onClick={() => setType(t)}>
-                {t === "all" ? "Tous les types" : TYPE_LABEL[t]} <span className="opacity-60">({items.filter((i) => t === "all" || i.type === t).length})</span>
+                {t === "all" ? tr("Tous les types") : tr(TYPE_LABEL[t])} <span className="opacity-60">({items.filter((i) => t === "all" || i.type === t).length})</span>
               </button>
             ))}
           </div>
         </div>
         <div>
-          <div className="text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Thème</div>
+          <div className="text-[12px] font-semibold uppercase tracking-wide text-ink-mute">{tr("Thème")}</div>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <button className={chip(theme === "all")} onClick={() => setTheme("all")}>Tous</button>
+            <button className={chip(theme === "all")} onClick={() => setTheme("all")}>{tr("Tous")}</button>
             {usedThemes.map((t) => <button key={t} className={chip(theme === t)} onClick={() => setTheme(t)}>{themes[t]}</button>)}
           </div>
         </div>
       </aside>
 
       <div>
-        <p className="mb-3 text-[13px] text-ink-mute">{filtered.length} point{filtered.length > 1 ? "s" : ""}</p>
+        <p className="mb-3 text-[13px] text-ink-mute">{tr(filtered.length > 1 ? "{n} points" : "{n} point", { n: filtered.length })}</p>
         <div className="space-y-3">
           {filtered.map((i) => (
             <article key={i.id} className="rounded-xl2 border border-paper-line bg-white p-5 shadow-card">
               <div className="flex flex-wrap items-center gap-2">
-                <Pill tone={i.type === "contradiction" ? "accent" : i.type === "vigilance" ? "warm" : "neutral"}>{TYPE_LABEL[i.type]}</Pill>
+                <Pill tone={i.type === "contradiction" ? "accent" : i.type === "vigilance" ? "warm" : "neutral"}>{tr(TYPE_LABEL[i.type])}</Pill>
                 <Pill>{themes[i.theme] ?? i.theme}</Pill>
                 {i.scope.map((s) => (
                   <span key={s} className="inline-flex items-center gap-1.5 text-[12px] text-ink-mute">
                     {s !== "transversal" && <VendorDot id={s} size={7} />}
-                    {SCOPE_LABEL[s]}
+                    {s === "transversal" ? tr("Transversal") : SCOPE_LABEL[s]}
                   </span>
                 ))}
               </div>
@@ -95,7 +96,7 @@ export function QuestionsClient({ items, themes, initialScope, initialQuery }: {
               <SourceChips className="mt-3" refs={i.refs} max={6} />
             </article>
           ))}
-          {filtered.length === 0 && <p className="text-[14px] text-ink-mute">Aucun point pour ces filtres.</p>}
+          {filtered.length === 0 && <p className="text-[14px] text-ink-mute">{tr("Aucun point pour ces filtres.")}</p>}
         </div>
       </div>
     </div>

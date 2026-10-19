@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import type { CellStatus, VendorId } from "@/data/types";
 import { VENDOR_META } from "@/data/vendor-meta";
 import type { ResolvedRef } from "@/lib/refs";
+import { tr } from "@/lib/i18n";
 
 export function Card({ children, className, as: As = "div" }: { children: ReactNode; className?: string; as?: "div" | "section" | "article" }) {
   return <As className={clsx("rounded-xl2 border border-paper-line bg-paper-card shadow-card", className)}>{children}</As>;
@@ -64,9 +65,9 @@ export function StatusMark({ status, withLabel = true }: { status: CellStatus; w
       <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-dashed border-ink-faint" />
     );
   return (
-    <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-ink-soft" title={STATUS_LABEL[status]}>
+    <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-ink-soft" title={tr(STATUS_LABEL[status])}>
       <span className="inline-flex">{shape}</span>
-      {withLabel && STATUS_LABEL[status]}
+      {withLabel && tr(STATUS_LABEL[status])}
     </span>
   );
 }

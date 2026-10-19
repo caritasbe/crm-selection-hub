@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTitle } from "@/lib/use-title";
+import { tr } from "@/lib/i18n";
 import { PageHeader } from "@/components/ui";
 import { ComparatorClient, type DimensionView } from "@/components/ComparatorClient";
 import { DIMENSIONS } from "@/data/comparison";
@@ -32,15 +33,9 @@ function Comparateur() {
   return (
     <div>
       <PageHeader
-        eyebrow="Comparateur"
-        title="Comparer les propositions"
-        intro={
-          <>
-            Choisissez les propositions et les dimensions à afficher. Chaque cellule indique ce que la documentation établit, avec ses sources.
-            Le statut décrit l&apos;état de la documentation, pas une appréciation : « Non précisé » signifie que les documents reçus ne permettent pas de conclure,
-            ce qui n&apos;équivaut pas à l&apos;absence de la fonctionnalité.
-          </>
-        }
+        eyebrow={tr("Comparateur")}
+        title={tr("Comparer les propositions")}
+        intro={tr("Choisissez les propositions et les dimensions à afficher. Chaque cellule indique ce que la documentation établit, avec ses sources. Le statut décrit l'état de la documentation, pas une appréciation : « Non précisé » signifie que les documents reçus ne permettent pas de conclure, ce qui n'équivaut pas à l'absence de la fonctionnalité.")}
       />
       <ComparatorClient dimensions={dims} focus={focus} />
     </div>

@@ -74,6 +74,8 @@ export interface FinanceScenario {
   setup: number; // mise en œuvre one-shot HTVA
   recurringUnit?: { monthly: number; defaultMonthsPerYear: number }; // accompagnement récurrent
   recurringFixed?: number; // récurrent annuel fixe documenté (sinon 0)
+  /** Mise en œuvre réglable entre deux scénarios documentés (jours × montant) */
+  setupRange?: { low: { days: number; amount: number; label: string }; high: { days: number; amount: number; label: string }; note: string };
   isDefault: boolean; // scénario retenu dans le tableau 3 du dossier d'évaluation
   variantOf?: string;
   sources: SourceRef[];

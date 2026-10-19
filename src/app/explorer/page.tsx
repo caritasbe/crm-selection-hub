@@ -12,6 +12,7 @@ import { search, snippet, tokenize, type SearchHit } from "@/lib/search";
 import { getDocument } from "@/lib/knowledge";
 import { resolveRef, resolveRefs } from "@/lib/refs";
 import { useTitle } from "@/lib/use-title";
+import { tr } from "@/lib/i18n";
 
 type View = "columns" | "list";
 
@@ -70,29 +71,29 @@ function Explorer() {
   return (
     <div>
       <PageHeader
-        eyebrow="Explorer le dossier"
-        title="Que disent les documents sur…"
-        intro="Tapez un sujet : les passages les plus pertinents de chaque proposition s'affichent côte à côte, tels qu'ils figurent dans les documents, sans reformulation. Cliquez sur un passage pour le lire en entier ou l'ouvrir à la bonne page."
+        eyebrow={tr("Explorer le dossier")}
+        title={tr("Que disent les documents sur…")}
+        intro={tr("Tapez un sujet : les passages les plus pertinents de chaque proposition s'affichent côte à côte, tels qu'ils figurent dans les documents, sans reformulation. Cliquez sur un passage pour le lire en entier ou l'ouvrir à la bonne page.")}
       />
 
       <div className="sticky top-[57px] z-20 -mx-4 mb-6 bg-paper/90 px-4 py-3 backdrop-blur sm:-mx-8 sm:px-8 lg:top-0">
-        <div className="flex items-center gap-2 rounded-2xl border border-paper-line bg-white p-1.5 pl-4 shadow-card focus-within:border-ink-faint">
+        <div data-tour="explorer-search" className="flex items-center gap-2 rounded-2xl border border-paper-line bg-white p-1.5 pl-4 shadow-card focus-within:border-ink-faint">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="shrink-0 text-ink-mute" aria-hidden><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
-          <label htmlFor="explore" className="sr-only">Sujet à explorer</label>
+          <label htmlFor="explore" className="sr-only">{tr("Sujet à explorer")}</label>
           <input
             id="explore"
             autoFocus
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="réversibilité, SFTP, paliers de contacts, formation, hébergement…"
+            placeholder={tr("réversibilité, SFTP, paliers de contacts, formation, hébergement…")}
             className="min-w-0 flex-1 bg-transparent py-2 text-[15.5px] outline-none placeholder:text-ink-faint"
           />
           {input && (
-            <button onClick={() => setInput("")} className="rounded-lg px-2.5 py-1.5 text-[12.5px] text-ink-mute hover:bg-paper-warm hover:text-ink" aria-label="Effacer">Effacer</button>
+            <button onClick={() => setInput("")} className="rounded-lg px-2.5 py-1.5 text-[12.5px] text-ink-mute hover:bg-paper-warm hover:text-ink" aria-label={tr("Effacer")}>{tr("Effacer")}</button>
           )}
         </div>
         {ready && (
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <div data-tour="explorer-filters" className="mt-3 flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-1.5">
               {VENDOR_ORDER.map((v) => (
                 <button
@@ -106,8 +107,8 @@ function Explorer() {
               ))}
             </div>
             <div className="flex rounded-xl bg-paper-deep p-1" role="tablist">
-              <button role="tab" aria-selected={view === "columns"} className={seg(view === "columns")} onClick={() => setView("columns")}>Par proposition</button>
-              <button role="tab" aria-selected={view === "list"} className={seg(view === "list")} onClick={() => setView("list")}>Tous les passages</button>
+              <button role="tab" aria-selected={view === "columns"} className={seg(view === "columns")} onClick={() => setView("columns")}>{tr("Par proposition")}</button>
+              <button role="tab" aria-selected={view === "list"} className={seg(view === "list")} onClick={() => setView("list")}>{tr("Tous les passages")}</button>
             </div>
           </div>
         )}
@@ -118,10 +119,10 @@ function Explorer() {
       ) : (
         <div className="space-y-10">
           {(related.dims.length > 0 || related.questions.length > 0) && (
-            <section className="animate-rise grid gap-3 lg:grid-cols-2">
+            <section data-tour="explorer-related" className="animate-rise grid gap-3 lg:grid-cols-2">
               {related.dims.length > 0 && (
                 <div className="rounded-xl2 border border-paper-line bg-white p-4 shadow-card">
-                  <div className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Dans le comparateur</div>
+                  <div className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">{tr("Dans le comparateur")}</div>
                   <ul className="space-y-2">
                     {related.dims.map((d) => (
                       <li key={d.id}>
@@ -140,13 +141,13 @@ function Explorer() {
               )}
               {related.questions.length > 0 && (
                 <div className="rounded-xl2 border border-paper-line bg-white p-4 shadow-card">
-                  <div className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Questions ouvertes liées</div>
+                  <div className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">{tr("Questions ouvertes liées")}</div>
                   <ul className="space-y-2.5">
                     {related.questions.map((x) => (
                       <li key={x.id} className="text-[13px]">
                         <Link href={`/questions?q=${encodeURIComponent(x.title)}`} className="font-medium text-ink hover:text-caritas-red">{x.title}</Link>
                         <div className="mt-0.5 flex flex-wrap gap-1.5">
-                          {x.scope.map((s) => s === "transversal" ? <Pill key={s}>Transversal</Pill> : <span key={s} className="inline-flex items-center gap-1 text-[11.5px] text-ink-mute"><VendorDot id={s} size={6} />{VENDOR_META[s].short}</span>)}
+                          {x.scope.map((s) => s === "transversal" ? <Pill key={s}>{tr("Transversal")}</Pill> : <span key={s} className="inline-flex items-center gap-1 text-[11.5px] text-ink-mute"><VendorDot id={s} size={6} />{VENDOR_META[s].short}</span>)}
                         </div>
                       </li>
                     ))}
@@ -158,7 +159,7 @@ function Explorer() {
 
           {view === "columns" && perVendor ? (
             <>
-              <section className={clsx("grid gap-4", active.length >= 4 ? "md:grid-cols-2 2xl:grid-cols-4" : active.length === 3 ? "md:grid-cols-3" : active.length === 2 ? "md:grid-cols-2" : "")}>
+              <section data-tour="explorer-results" className={clsx("grid gap-4", active.length >= 4 ? "md:grid-cols-2 2xl:grid-cols-4" : active.length === 3 ? "md:grid-cols-3" : active.length === 2 ? "md:grid-cols-2" : "")}>
                 {active.map((v) => (
                   <div key={v} className="min-w-0">
                     <div className="mb-3 flex items-center gap-2 border-b-2 pb-2" style={{ borderColor: VENDOR_META[v].color }}>
@@ -168,21 +169,21 @@ function Explorer() {
                     {perVendor[v].length ? (
                       <div className="space-y-2.5">{perVendor[v].map((h) => <Passage key={h.chunk.id} hit={h} q={q} />)}</div>
                     ) : (
-                      <p className="rounded-xl border border-dashed border-paper-line p-4 text-[13px] text-ink-mute">Aucun passage de cette proposition ne mentionne ce sujet. Cela ne signifie pas que le sujet n&apos;est pas couvert : essayez un autre terme.</p>
+                      <p className="rounded-xl border border-dashed border-paper-line p-4 text-[13px] text-ink-mute">{tr("Aucun passage de cette proposition ne mentionne ce sujet. Cela ne signifie pas que le sujet n'est pas couvert : essayez un autre terme.")}</p>
                     )}
                   </div>
                 ))}
               </section>
               {transversal.length > 0 && (
                 <section>
-                  <h2 className="mb-3 text-[14px] font-semibold text-ink">Documents Caritas et transversaux</h2>
+                  <h2 className="mb-3 text-[14px] font-semibold text-ink">{tr("Documents Caritas et transversaux")}</h2>
                   <div className="grid gap-2.5 md:grid-cols-2">{transversal.map((h) => <Passage key={h.chunk.id} hit={h} q={q} />)}</div>
                 </section>
               )}
             </>
           ) : (
             <section>
-              <p className="mb-3 text-[13px] text-ink-mute">{all.filter((h) => h.chunk.vendors.some((v) => v === "transversal" || active.includes(v as VendorId))).length} passages, du plus au moins pertinent</p>
+              <p className="mb-3 text-[13px] text-ink-mute">{all.filter((h) => h.chunk.vendors.some((v) => v === "transversal" || active.includes(v as VendorId))).length} {tr("passages, du plus au moins pertinent")}</p>
               <div className="space-y-2.5">
                 {all.filter((h) => h.chunk.vendors.some((v) => v === "transversal" || active.includes(v as VendorId))).map((h) => <Passage key={h.chunk.id} hit={h} q={q} showVendor />)}
               </div>
@@ -190,8 +191,7 @@ function Explorer() {
           )}
 
           <p className="border-t border-paper-line pt-4 text-[12.5px] text-ink-mute">
-            Recherche par mots-clés dans le texte de tous les documents, avec synonymes métier (FR, EN, NL). Les passages sont cités tels quels : aucune IA ne résume ni n&apos;interprète.
-            Le classement reflète la correspondance avec les termes recherchés, pas une appréciation des offres.
+            {tr("Recherche par mots-clés dans le texte de tous les documents, avec synonymes métier (FR, EN, NL). Les passages sont cités tels quels : aucune IA ne résume ni n'interprète. Le classement reflète la correspondance avec les termes recherchés, pas une appréciation des offres.")}
           </p>
         </div>
       )}
@@ -212,16 +212,16 @@ function Passage({ hit, q, showVendor }: { hit: SearchHit; q: string; showVendor
             {showVendor && c.vendors[0] !== "transversal" && <VendorDot id={c.vendors[0] as VendorId} size={7} />}
             <span className="truncate">{ref.shortTitle}</span>
           </div>
-          <div className="text-[11.5px] text-ink-mute">{c.label}{doc?.nature === "interne" ? " · document interne" : ""}</div>
+          <div className="text-[11.5px] text-ink-mute">{c.label}{doc?.nature === "interne" ? ` · ${tr("document interne")}` : ""}</div>
         </div>
       </div>
       <p className="mt-2 whitespace-pre-wrap break-words text-[13px] leading-relaxed text-ink-soft">
         <HighlightText text={open ? c.text : snippet(c.text, q, 300)} query={q} />
       </p>
       <div className="mt-2.5 flex flex-wrap items-center gap-3 text-[12.5px]">
-        <button onClick={() => setOpen((v) => !v)} className="font-medium text-ink-soft hover:text-ink">{open ? "Réduire" : "Lire le passage complet"}</button>
+        <button onClick={() => setOpen((v) => !v)} className="font-medium text-ink-soft hover:text-ink">{open ? tr("Réduire") : tr("Lire le passage complet")}</button>
         <Link href={`/bibliotheque/document?id=${encodeURIComponent(c.docId)}&page=${c.page}&q=${encodeURIComponent(q)}#p${c.page}`} className="font-medium text-ink underline underline-offset-2 hover:text-caritas-red">
-          Voir dans le document
+          {tr("Voir dans le document")}
         </Link>
       </div>
     </article>
@@ -232,13 +232,13 @@ function Empty({ onPick }: { onPick: (s: string) => void }) {
   return (
     <div className="animate-rise grid gap-6 lg:grid-cols-[1.2fr_1fr]">
       <div className="rounded-xl2 border border-paper-line bg-white p-6 shadow-card">
-        <h2 className="text-[15px] font-semibold text-ink">Quelques sujets pour commencer</h2>
+        <h2 className="text-[15px] font-semibold text-ink">{tr("Quelques sujets pour commencer")}</h2>
         <div className="mt-4 flex flex-wrap gap-2">
           {SUGGESTIONS.map((s) => (
             <button key={s} onClick={() => onPick(s)} className="rounded-lg bg-paper-warm px-3 py-2 text-left text-[13px] text-ink-soft transition hover:bg-paper-deep hover:text-ink">{s}</button>
           ))}
         </div>
-        <h2 className="mt-7 text-[15px] font-semibold text-ink">Ou par dimension du comparateur</h2>
+        <h2 className="mt-7 text-[15px] font-semibold text-ink">{tr("Ou par dimension du comparateur")}</h2>
         <div className="mt-3 flex flex-wrap gap-2">
           {DIMENSIONS.map((d) => (
             <button key={d.id} onClick={() => onPick(d.label)} className="rounded-full border border-paper-line px-3 py-1.5 text-[12.5px] text-ink-soft transition hover:border-ink-faint hover:text-ink">{d.label}</button>
@@ -246,12 +246,12 @@ function Empty({ onPick }: { onPick: (s: string) => void }) {
         </div>
       </div>
       <div className="rounded-xl2 border border-paper-line bg-paper-warm/60 p-6 text-[13.5px] leading-relaxed text-ink-soft">
-        <h2 className="text-[15px] font-semibold text-ink">Comment ça marche</h2>
+        <h2 className="text-[15px] font-semibold text-ink">{tr("Comment ça marche")}</h2>
         <ul className="mt-3 space-y-2.5">
-          <li><strong className="font-medium text-ink">Côte à côte.</strong> Les meilleurs passages de chaque proposition, pour comparer ce que chacune documente sur le même sujet.</li>
-          <li><strong className="font-medium text-ink">Sans interprétation.</strong> Le texte est celui des documents ; un clic vous amène à la page d&apos;origine.</li>
-          <li><strong className="font-medium text-ink">Synonymes inclus.</strong> « coûts » trouve aussi licence, tarif, pricing ; « RGPD » trouve DPA, hébergement, sous-traitants.</li>
-          <li><strong className="font-medium text-ink">Absence ≠ manque.</strong> Si une colonne est vide, la documentation n&apos;en parle pas avec ces mots : essayez un synonyme.</li>
+          <li><strong className="font-medium text-ink">{tr("Côte à côte.")}</strong> {tr("Les meilleurs passages de chaque proposition, pour comparer ce que chacune documente sur le même sujet.")}</li>
+          <li><strong className="font-medium text-ink">{tr("Sans interprétation.")}</strong> {tr("Le texte est celui des documents ; un clic vous amène à la page d'origine.")}</li>
+          <li><strong className="font-medium text-ink">{tr("Synonymes inclus.")}</strong> {tr("« coûts » trouve aussi licence, tarif, pricing ; « RGPD » trouve DPA, hébergement, sous-traitants.")}</li>
+          <li><strong className="font-medium text-ink">{tr("Absence ≠ manque.")}</strong> {tr("Si une colonne est vide, la documentation n'en parle pas avec ces mots : essayez un synonyme.")}</li>
         </ul>
       </div>
     </div>

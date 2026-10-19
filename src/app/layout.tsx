@@ -4,6 +4,7 @@ import { Shell } from "@/components/Shell";
 import { VaultGate } from "@/components/VaultGate";
 import { CommandPalette } from "@/components/CommandPalette";
 import { Tour } from "@/components/Tour";
+import { LangProvider } from "@/lib/i18n";
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -37,11 +38,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="referrer" content="no-referrer" />
       </head>
       <body>
-        <VaultGate>
-          <Shell>{children}</Shell>
-          <CommandPalette />
-          <Tour />
-        </VaultGate>
+        <LangProvider>
+          <VaultGate>
+            <Shell>{children}</Shell>
+            <CommandPalette />
+            <Tour />
+          </VaultGate>
+        </LangProvider>
       </body>
     </html>
   );

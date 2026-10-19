@@ -10,6 +10,7 @@ import type { VendorId } from "@/data/types";
 import { HighlightText } from "@/components/HighlightText";
 import { OriginalButton } from "@/components/OriginalButton";
 import { useTitle } from "@/lib/use-title";
+import { tr } from "@/lib/i18n";
 
 export default function DocPage() {
   return (
@@ -22,7 +23,7 @@ export default function DocPage() {
 function Doc() {
   const params = useSearchParams();
   const doc = getDocument(params.get("id") ?? "");
-  useTitle(doc?.title ?? "Document");
+  useTitle(doc?.title ?? "Document", false);
   const target = Number(params.get("page")) || null;
   const query = params.get("q") ?? undefined;
 
@@ -36,8 +37,8 @@ function Doc() {
   if (!doc) {
     return (
       <div className="py-20 text-center">
-        <h1 className="text-[22px] font-semibold">Document introuvable</h1>
-        <Link href="/bibliotheque" className="mt-4 inline-block text-[14px] underline">Retour à la bibliothèque</Link>
+        <h1 className="text-[22px] font-semibold">{tr("Document introuvable")}</h1>
+        <Link href="/bibliotheque" className="mt-4 inline-block text-[14px] underline">{tr("Retour à la bibliothèque")}</Link>
       </div>
     );
   }
@@ -45,16 +46,16 @@ function Doc() {
 
   return (
     <div>
-      <Link href={query ? `/bibliotheque?q=${encodeURIComponent(query)}` : "/bibliotheque"} className="text-[13px] text-ink-mute hover:text-ink">← Bibliothèque</Link>
+      <Link href={query ? `/bibliotheque?q=${encodeURIComponent(query)}` : "/bibliotheque"} className="text-[13px] text-ink-mute hover:text-ink">← {tr("Bibliothèque")}</Link>
       <header className="mt-4 mb-8">
         <div className="flex flex-wrap items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink-mute">
-          {NATURE_LABELS[doc.nature]} · {doc.format.toUpperCase()} · {doc.date}
+          {tr(NATURE_LABELS[doc.nature])} · {doc.format.toUpperCase()} · {doc.date}
         </div>
         <h1 className="mt-2 text-[26px] font-semibold leading-tight tracking-tight text-ink sm:text-[30px]">{doc.title}</h1>
         <p className="mt-2 text-[14px] text-ink-soft">{doc.issuer}</p>
         <div className="mt-2 flex flex-wrap gap-3 text-[12.5px] text-ink-mute">
           {doc.vendors.map((v) => (
-            <span key={v} className="inline-flex items-center gap-1.5">{v !== "transversal" && <VendorDot id={v as VendorId} size={8} />}{SCOPE_LABEL[v]}</span>
+            <span key={v} className="inline-flex items-center gap-1.5">{v !== "transversal" && <VendorDot id={v as VendorId} size={8} />}{v === "transversal" ? tr("Transversal") : SCOPE_LABEL[v]}</span>
           ))}
         </div>
         <p className="mt-4 max-w-3xl text-[14px] leading-relaxed text-ink-soft">{doc.description}</p>
@@ -78,17 +79,17 @@ function Doc() {
           </div>
         </nav>
         <div className="min-w-0 space-y-4">
-          <p className="text-[12.5px] text-ink-mute">Texte extrait automatiquement pour la recherche et la lecture rapide. La mise en page et les visuels de l&apos;original peuvent différer : en cas de doute, l&apos;original fait foi.</p>
+          <p className="text-[12.5px] text-ink-mute">{tr("Texte extrait automatiquement pour la recherche et la lecture rapide. La mise en page et les visuels de l'original peuvent différer : en cas de doute, l'original fait foi.")}</p>
           {pages.map((p) => (
             <Card key={p.page} className={`scroll-mt-6 p-5 ${p.page === target ? "ring-2 ring-caritas-orange/50" : ""}`}>
               <div id={`p${p.page}`} className="scroll-mt-6 mb-3 flex items-center justify-between text-[12px] font-semibold uppercase tracking-wide text-ink-mute">
                 <span>{p.label}</span>
-                {doc.format === "pdf" && <OriginalButton docId={doc.id} page={p.page} variant="link">voir dans l&apos;original</OriginalButton>}
+                {doc.format === "pdf" && <OriginalButton docId={doc.id} page={p.page} variant="link">{tr("voir dans l'original")}</OriginalButton>}
               </div>
               {p.text ? (
                 <div className="whitespace-pre-wrap break-words text-[13px] leading-relaxed text-ink"><HighlightText text={p.text} query={query} /></div>
               ) : (
-                <p className="text-[13px] italic text-ink-mute">Aucun texte extractible (page visuelle) : consultez l&apos;original.</p>
+                <p className="text-[13px] italic text-ink-mute">{tr("Aucun texte extractible (page visuelle) : consultez l'original.")}</p>
               )}
             </Card>
           ))}

@@ -17,6 +17,18 @@ Les données sont restaurées dans `private/`, dossier exclu de Git.
 - **Fiches, comparateur, finances, questions** : `private/data/*.ts`. Chaque information garde ses sources (`{ doc, page }`).
 - **Nouveau document** : le déposer dans `private/documents/…`, l'ajouter à `private/manifest.json`, puis `npm run ingest`.
 
+## Version anglaise
+
+Les textes de l'interface sont traduits dans `src/lib/i18n-en.ts` (aucune donnée du dossier). Les contenus du dossier (fiches, comparateur, questions, finances, titres et descriptions des documents) sont traduits dans `private/i18n/en.json`, chiffré avec le reste.
+
+Après toute modification d'un texte dans `private/data` ou `private/manifest.json` :
+
+```bash
+npm run i18n:check   # liste les textes sans traduction dans private/i18n/missing.json
+```
+
+Ajouter les traductions manquantes dans `private/i18n/en.json` (clé : texte français exact). Un texte non traduit s'affiche en français dans la version anglaise. Le contenu des documents eux-mêmes reste dans sa langue d'origine.
+
 ## 3. Vérifier, chiffrer, publier
 
 ```bash

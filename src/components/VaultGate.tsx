@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { lock as lockVault, unlockFromStorage, unlockWithPassword, WrongPasswordError } from "@/lib/vault";
 import { SEALED_AT } from "@/data/store";
+import { LangSwitch, useT } from "@/lib/i18n";
 
 type Status = "boot" | "locked" | "ready";
 const VaultCtx = createContext<{ lock: () => void; sealedAt: string }>({ lock: () => {}, sealedAt: "" });
@@ -49,6 +50,7 @@ function Boot() {
 }
 
 function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
+  const t = useT();
   const [pw, setPw] = useState("");
   const [show, setShow] = useState(false);
   const [remember, setRemember] = useState(false);
@@ -64,17 +66,17 @@ function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     if (!pw.trim() || busy) return;
     setError(null);
     setBusy("key");
-    const t = setTimeout(() => setBusy("data"), 900);
+    const timer = setTimeout(() => setBusy("data"), 900);
     try {
       await unlockWithPassword(pw.trim(), remember);
       onUnlocked();
     } catch (err) {
-      setError(err instanceof WrongPasswordError ? "Mot de passe incorrect. Vérifiez les tirets et les majuscules." : "Le site n'a pas pu charger les données. Rechargez la page.");
+      setError(err instanceof WrongPasswordError ? t("Mot de passe incorrect. Vérifiez l'orthographe et les tirets.") : t("Le site n'a pas pu charger les données. Rechargez la page."));
       setShake((n) => n + 1);
       setBusy(null);
       input.current?.select();
     } finally {
-      clearTimeout(t);
+      clearTimeout(timer);
     }
   }
 
@@ -91,6 +93,7 @@ function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             <div className="text-[14px] font-bold tracking-[0.14em] text-ink">CARITAS</div>
             <div className="text-[12px] font-medium tracking-[0.1em] text-ink-mute">CRM SELECTION HUB</div>
           </div>
+          <LangSwitch className="ml-auto" />
         </div>
 
         <form
@@ -98,10 +101,10 @@ function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
           onSubmit={submit}
           className={`rounded-[22px] border border-paper-line bg-white/90 p-7 shadow-lift backdrop-blur ${shake ? "animate-[shake_0.4s_ease-in-out]" : ""}`}
         >
-          <h1 className="text-[22px] font-semibold tracking-tight text-ink">Espace du comité de sélection</h1>
-          <p className="mt-1.5 text-[14px] leading-relaxed text-ink-soft">Saisissez le mot de passe communiqué aux membres du comité.</p>
+          <h1 className="text-[22px] font-semibold tracking-tight text-ink">{t("Espace du comité de sélection")}</h1>
+          <p className="mt-1.5 text-[14px] leading-relaxed text-ink-soft">{t("Saisissez le mot de passe communiqué aux membres du comité.")}</p>
 
-          <label htmlFor="pw" className="mt-6 block text-[12.5px] font-medium text-ink-soft">Mot de passe</label>
+          <label htmlFor="pw" className="mt-6 block text-[12.5px] font-medium text-ink-soft">{t("Mot de passe")}</label>
           <div className={`mt-1.5 flex items-center rounded-xl border bg-paper pr-1.5 transition focus-within:bg-white ${error ? "border-caritas-red/60" : "border-paper-line focus-within:border-ink-faint"}`}>
             <input
               ref={input}
@@ -116,14 +119,14 @@ function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               aria-describedby={error ? "pw-error" : undefined}
             />
             <button type="button" onClick={() => setShow((v) => !v)} className="rounded-lg px-2.5 py-1.5 text-[12.5px] font-medium text-ink-mute hover:bg-paper-warm hover:text-ink">
-              {show ? "Masquer" : "Afficher"}
+              {show ? t("Masquer") : t("Afficher")}
             </button>
           </div>
           {error && <p id="pw-error" role="alert" className="mt-2 text-[13px] text-caritas-red">{error}</p>}
 
           <label className="mt-4 flex cursor-pointer items-start gap-2.5 text-[13px] text-ink-soft">
             <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#E20817]" />
-            <span>Rester connecté sur cet appareil <span className="text-ink-mute">(à éviter sur un poste partagé)</span></span>
+            <span>{t("Rester connecté sur cet appareil")} <span className="text-ink-mute">{t("(à éviter sur un poste partagé)")}</span></span>
           </label>
 
           <button
@@ -131,13 +134,13 @@ function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-caritas-red px-4 py-3 text-[15px] font-medium text-white transition hover:bg-[#c90714] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {busy && <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />}
-            {busy === "key" ? "Vérification…" : busy === "data" ? "Ouverture des documents…" : "Entrer"}
+            {busy === "key" ? t("Vérification…") : busy === "data" ? t("Ouverture des documents…") : t("Entrer")}
           </button>
         </form>
 
         <p className="mt-5 flex items-start gap-2 px-1 text-[12px] leading-relaxed text-ink-mute">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-0.5 shrink-0" aria-hidden><rect x="4" y="10" width="16" height="11" rx="2" /><path d="M8 10V7a4 4 0 1 1 8 0v3" /></svg>
-          Contenu chiffré (AES-256). Le mot de passe est vérifié dans votre navigateur et n&apos;est envoyé nulle part.
+          {t("Contenu chiffré (AES-256). Le mot de passe est vérifié dans votre navigateur et n'est envoyé nulle part.")}
         </p>
       </main>
     </div>

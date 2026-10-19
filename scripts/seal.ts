@@ -58,10 +58,13 @@ async function main() {
   const keep = new Set(Object.values(files));
   for (const f of fs.readdirSync(FILES)) if (!keep.has(f)) fs.rmSync(path.join(FILES, f));
 
-  const payload: VaultPayload = { version: 1, sealedAt: new Date().toISOString(), data, knowledge: { documents, chunks, pages, files } };
+  const enPath = path.join(PRIV, "i18n", "en.json");
+  const en: Record<string, string> = fs.existsSync(enPath) ? JSON.parse(fs.readFileSync(enPath, "utf-8")) : {};
+  if (!Object.keys(en).length) console.warn("  aucune traduction anglaise (private/i18n/en.json) : la version EN affichera le français.");
+  const payload: VaultPayload = { version: 1, sealedAt: new Date().toISOString(), data, knowledge: { documents, chunks, pages, files }, i18n: { en } };
 
   // Archive des sources éditables, pour pouvoir tout restaurer depuis le dépôt (npm run unseal)
-  const tgz = execFileSync("tar", ["-czf", "-", "-C", PRIV, "data", "manifest.json", ...(fs.existsSync(path.join(PRIV, "tests")) ? ["tests"] : [])]);
+  const tgz = execFileSync("tar", ["-czf", "-", "-C", PRIV, "data", "manifest.json", ...["tests", "i18n"].filter((d) => fs.existsSync(path.join(PRIV, d)))]);
 
   for (const f of fs.readdirSync(OUT)) if (f.endsWith(".bin")) fs.rmSync(path.join(OUT, f));
   const rnd = () => crypto.randomBytes(12).toString("hex") + ".bin";

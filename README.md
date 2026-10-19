@@ -11,13 +11,13 @@ Le comité y explore les propositions reçues, les compare sur les dimensions de
 | Accueil | Contexte du projet, propositions, dimensions d'évaluation, sujets ouverts, calendrier, validité des offres |
 | Explorer | Recherche d'un sujet dans tout le dossier, passages côte à côte par proposition, liens vers le comparateur et les questions ouvertes |
 | Propositions | Une fiche complète par offre : composants, périmètre, architecture, intégrations, finances, mise en œuvre, contrat, limites, fiche technique, questions, documents |
-| Comparateur | Vue d'ensemble interactive, comparatif détaillé avec justifications et sources, fiche technique du comité |
-| Finances | Coût sur 3 ans selon la formule du dossier d'évaluation, scénarios, HTVA / TVAC, récurrent ajustable, exclusions, avertissements de comparabilité |
+| Comparateur | Vue d'ensemble interactive, comparatif détaillé avec justifications et sources |
+| Finances | Coût sur 3 ans selon la formule du dossier d'évaluation, HTVA / TVAC, curseurs (accompagnement récurrent, fourchette de mise en œuvre), exclusions, avertissements de comparabilité |
 | Questions ouvertes | Points sourcés, filtrables par proposition, thème et type |
 | Bibliothèque | Documents de référence, recherche plein texte, visionneuse page par page, ouverture des originaux |
 | Méthode | Étapes, critères, pondérations, gouvernance |
 
-Navigation rapide partout : `Ctrl` + `K` (ou `/`).
+Navigation rapide partout : `Ctrl` + `K` (ou `/`). Bascule français / anglais (bouton FR / EN). Visite guidée interactive au premier accès, relançable par le bouton « Tutoriel ».
 
 ## Fonctionnement : un site statique chiffré
 

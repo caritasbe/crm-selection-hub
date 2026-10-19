@@ -52,12 +52,65 @@ export interface KnowledgeData {
   files: Record<string, string>;
 }
 
+export type Lang = "fr" | "en";
+
 export interface VaultPayload {
   version: 1;
   sealedAt: string;
   data: StructuredData;
   knowledge: KnowledgeData;
+  /** Traductions des contenus (français → anglais), chiffrées avec le reste */
+  i18n?: { en: Record<string, string> };
 }
+
+/** Clés dont la valeur est un identifiant, jamais un texte à traduire. */
+const NO_TRANSLATE = new Set(["id", "doc", "vendor", "scope", "theme", "type", "status", "group", "color", "variantOf", "file", "format", "nature", "vendors", "themes", "docId", "short"]);
+/** Blocs jamais traduits : identifiants, configuration de recherche, données non affichées. */
+const SKIP_BLOCKS = new Set(["documents", "VENDOR_ORDER", "LEXICON", "VENDOR_TERMS", "TECH_CHECKS", "OFFER_DEADLINES"]);
+
+/** Valeur d'identifiant : texte ou liste de textes (et non une liste d'objets à traduire). */
+const isIdentifierValue = (x: unknown) => typeof x === "string" || (Array.isArray(x) && x.every((y) => typeof y === "string")) || (!!x && typeof x === "object" && !Array.isArray(x) && Object.values(x as object).every((y) => typeof y !== "object" || Array.isArray(y)));
+
+function translateDeep<T>(v: T, dict: Record<string, string>, key = ""): T {
+  if (typeof v === "string") return (NO_TRANSLATE.has(key) ? v : dict[v] ?? v) as T;
+  if (Array.isArray(v)) return v.map((x) => translateDeep(x, dict, key)) as T;
+  if (v && typeof v === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, x] of Object.entries(v as Record<string, unknown>)) {
+      // Les clés d'objets indexés par proposition (cells, values, w) ne sont pas traduites ; les valeurs le sont
+      out[k] = SKIP_BLOCKS.has(k) || (NO_TRANSLATE.has(k) && isIdentifierValue(x)) ? x : translateDeep(x, dict, NO_TRANSLATE.has(k) ? "" : k);
+    }
+    return out as T;
+  }
+  return v;
+}
+
+const LOCATOR_EN: Record<string, string> = { page: "page", diapositive: "slide", onglet: "tab", section: "section" };
+
+/** Libellés de page : « p. 4 », « Diapositive 3 », « onglet « X » », « § 2.1 Titre » */
+function pageLabelEn(label: string, dict: Record<string, string>): string {
+  return dict[label] ?? label.replace(/^Diapositive /, "Slide ").replace(/^onglet /, "tab ").replace(/^Section /, "Section ");
+}
+
+function translateKnowledge(k: KnowledgeData, dict: Record<string, string>): KnowledgeData {
+  const documents = k.documents.map((d) => ({
+    ...d,
+    title: dict[d.title] ?? d.title,
+    short: d.short ? dict[d.short] ?? d.short : d.short,
+    description: dict[d.description] ?? d.description,
+    note: d.note ? dict[d.note] ?? d.note : d.note,
+    date: dict[d.date] ?? d.date,
+    locatorType: LOCATOR_EN[d.locatorType] ?? d.locatorType,
+    pages: d.pages.map((p) => ({ ...p, label: pageLabelEn(p.label, dict) })),
+  }));
+  const pages: KnowledgeData["pages"] = {};
+  for (const [id, list] of Object.entries(k.pages)) pages[id] = list.map((p) => ({ ...p, label: pageLabelEn(p.label, dict) }));
+  const chunks = k.chunks.map((c) => ({ ...c, label: pageLabelEn(c.label, dict) }));
+  return { ...k, documents, pages, chunks };
+}
+
+let RAW: VaultPayload | null = null;
+export let CURRENT_LANG: Lang = "fr";
 
 /* Liaisons « vivantes » : les modules importateurs voient les valeurs après hydrate(). */
 export let VENDOR_ORDER: StructuredData["VENDOR_ORDER"] = [];
@@ -90,7 +143,11 @@ export let VENDOR_TERMS: StructuredData["VENDOR_TERMS"] = {};
 export let KNOWLEDGE: KnowledgeData = { documents: [], chunks: [], pages: {}, files: {} };
 export let SEALED_AT = "";
 
-export function hydrate(p: VaultPayload): void {
+export function hydrate(raw: VaultPayload, lang: Lang = CURRENT_LANG): void {
+  RAW = raw;
+  CURRENT_LANG = lang;
+  const dict = lang === "en" ? raw.i18n?.en ?? {} : null;
+  const p: VaultPayload = dict ? { ...raw, data: translateDeep(raw.data, dict), knowledge: translateKnowledge(raw.knowledge, dict) } : raw;
   const d = p.data;
   VENDOR_ORDER = d.VENDOR_ORDER;
   VENDOR_IDS = d.VENDOR_ORDER;
@@ -121,4 +178,10 @@ export function hydrate(p: VaultPayload): void {
   VENDOR_TERMS = d.VENDOR_TERMS;
   KNOWLEDGE = p.knowledge;
   SEALED_AT = p.sealedAt;
+}
+
+/** Change la langue des contenus déjà déchiffrés. */
+export function setDataLang(lang: Lang): void {
+  if (RAW) hydrate(RAW, lang);
+  else CURRENT_LANG = lang;
 }

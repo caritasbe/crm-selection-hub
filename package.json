@@ -13,7 +13,8 @@
     "ingest": "python3 scripts/ingest.py",
     "seal": "tsx scripts/seal.ts",
     "unseal": "tsx scripts/unseal.ts",
-    "check": "tsx scripts/check-public.ts"
+    "check": "tsx scripts/check-public.ts",
+    "i18n:check": "tsx scripts/i18n-extract.ts"
   },
   "engines": {
     "node": ">=20"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTitle } from "@/lib/use-title";
+import { tr } from "@/lib/i18n";
 import { Card, PageHeader, SectionTitle, SourceChips } from "@/components/ui";
 import { STEPS, FAMILIES, SCALE, NOT_SCORED, GOVERNANCE, EVALUATORS, WEIGHTS_NOTE } from "@/data/evaluation";
 import { resolveRefs } from "@/lib/refs";
@@ -11,17 +12,17 @@ export default function MethodePage() {
   return (
     <div className="space-y-12">
       <PageHeader
-        eyebrow="Méthode & critères"
-        title="Comment le comité évalue"
-        intro="Cette section fait référence au dossier d'évaluation."
+        eyebrow={tr("Méthode & critères")}
+        title={tr("Comment le comité évalue")}
+        intro={tr("Cette section fait référence au dossier d'évaluation.")}
       />
 
       <section>
-        <SectionTitle>Trois étapes</SectionTitle>
+        <SectionTitle>{tr("Trois étapes")}</SectionTitle>
         <div className="grid gap-3 md:grid-cols-3">
           {STEPS.map((s, i) => (
             <Card key={s.title} className="p-5">
-              <div className="text-[12px] font-semibold text-caritas-red">Étape {i + 1}</div>
+              <div className="text-[12px] font-semibold text-caritas-red">{tr("Étape {n}", { n: i + 1 })}</div>
               <h3 className="mt-1 text-[15px] font-semibold text-ink">{s.title}</h3>
               <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink-soft">{s.text}</p>
             </Card>
@@ -31,7 +32,7 @@ export default function MethodePage() {
       </section>
 
       <section>
-        <SectionTitle hint="Repères de notation de 1 à 5, NSP possible">Les 12 critères et leurs repères</SectionTitle>
+        <SectionTitle hint={tr("Repères de notation de 1 à 5, NSP possible")}>{tr("Les 12 critères et leurs repères")}</SectionTitle>
         <div className="space-y-4">
           {FAMILIES.map((f) => (
             <Card key={f.id} className="overflow-hidden">
@@ -51,22 +52,22 @@ export default function MethodePage() {
           ))}
         </div>
         <Card className="mt-4 p-5">
-          <div className="text-[13px] font-semibold text-ink">Échelle</div>
+          <div className="text-[13px] font-semibold text-ink">{tr("Échelle")}</div>
           <p className="mt-1 text-[13px] text-ink-soft">{SCALE.join(" · ")}</p>
-          <div className="mt-4 text-[13px] font-semibold text-ink">Ce qui n&apos;est pas noté</div>
+          <div className="mt-4 text-[13px] font-semibold text-ink">{tr("Ce qui n'est pas noté")}</div>
           <p className="mt-1 text-[13px] text-ink-soft">{NOT_SCORED}</p>
           <SourceChips className="mt-3" refs={resolveRefs([{ doc: "eval", page: 2 }, { doc: "eval", page: 8 }])} />
         </Card>
       </section>
 
       <section>
-        <SectionTitle hint={WEIGHTS_NOTE}>Pondérations par évaluateur</SectionTitle>
+        <SectionTitle hint={WEIGHTS_NOTE}>{tr("Pondérations par évaluateur")}</SectionTitle>
         <Card className="overflow-x-auto scrollbar-thin">
           <table className="w-full min-w-[620px] text-[13.5px]">
             <thead className="bg-paper-warm/60 text-left">
               <tr>
-                <th className="p-3 font-semibold">Évaluateur</th>
-                <th className="p-3 font-semibold">Fonction</th>
+                <th className="p-3 font-semibold">{tr("Évaluateur")}</th>
+                <th className="p-3 font-semibold">{tr("Fonction")}</th>
                 {FAMILIES.map((f) => <th key={f.id} className="p-3 text-center font-semibold" title={f.label}>{f.id}</th>)}
               </tr>
             </thead>
@@ -87,13 +88,13 @@ export default function MethodePage() {
               ))}
             </tbody>
           </table>
-          <p className="border-t border-paper-line p-3 text-[12.5px] text-ink-mute">3 = expertise de référence · 2 = expertise pertinente · 1 = voix standard. Une abstention (NSP) est exclue du calcul, elle ne vaut pas zéro.</p>
+          <p className="border-t border-paper-line p-3 text-[12.5px] text-ink-mute">{tr("3 = expertise de référence · 2 = expertise pertinente · 1 = voix standard. Une abstention (NSP) est exclue du calcul, elle ne vaut pas zéro.")}</p>
         </Card>
         <SourceChips className="mt-3" refs={resolveRefs([{ doc: "eval", page: 5 }])} />
       </section>
 
       <section>
-        <SectionTitle>Gouvernance de la décision</SectionTitle>
+        <SectionTitle>{tr("Gouvernance de la décision")}</SectionTitle>
         <Card className="p-5">
           <p className="text-[14px] leading-relaxed text-ink">{GOVERNANCE}</p>
           <SourceChips className="mt-3" refs={resolveRefs([{ doc: "eval", page: 1 }, { doc: "eval", page: 7 }])} />
@@ -101,7 +102,7 @@ export default function MethodePage() {
       </section>
 
       <section>
-        <SectionTitle>Principes de cet outil</SectionTitle>
+        <SectionTitle>{tr("Principes de cet outil")}</SectionTitle>
         <div className="grid gap-3 md:grid-cols-2">
           {[
             ["Neutralité", "Aucune recommandation, aucun classement, aucune note. Les propositions apparaissent toujours dans l'ordre du dossier d'évaluation, avec la même structure."],
@@ -112,8 +113,8 @@ export default function MethodePage() {
             ["Données exclues", "L'onglet « Archive V1 » du dossier d'évaluation (notes individuelles d'une grille abandonnée) n'est ni indexé ni affiché."],
           ].map(([t, d]) => (
             <Card key={t} className="p-5">
-              <h3 className="text-[14px] font-semibold text-ink">{t}</h3>
-              <p className="mt-1 text-[13.5px] leading-relaxed text-ink-soft">{d}</p>
+              <h3 className="text-[14px] font-semibold text-ink">{tr(t)}</h3>
+              <p className="mt-1 text-[13.5px] leading-relaxed text-ink-soft">{tr(d)}</p>
             </Card>
           ))}
         </div>

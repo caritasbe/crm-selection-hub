@@ -9,6 +9,7 @@ import { VendorDot } from "./ui";
 import { search, snippet } from "@/lib/search";
 import { getDocument } from "@/lib/knowledge";
 import { resolveRef } from "@/lib/refs";
+import { tr } from "@/lib/i18n";
 
 export interface DocView {
   id: string; title: string; issuer: string; date: string; vendors: string[]; nature: string; natureLabel: string;
@@ -75,29 +76,29 @@ export function LibraryClient({ docs, natures, initialQuery }: { docs: DocView[]
   return (
     <div>
       <div className="no-print mb-6 space-y-4 rounded-xl2 border border-paper-line bg-white p-5 shadow-card">
-        <div className="flex items-center gap-2 rounded-xl border border-paper-line bg-paper px-3 focus-within:border-ink-faint focus-within:bg-white">
+        <div data-tour="lib-search" className="flex items-center gap-2 rounded-xl border border-paper-line bg-paper px-3 focus-within:border-ink-faint focus-within:bg-white">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-ink-mute" aria-hidden><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
-          <label htmlFor="lib-q" className="sr-only">Rechercher dans les documents</label>
-          <input id="lib-q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher dans le contenu : réversibilité, SFTP, palier, hypercare…" className="w-full bg-transparent py-2.5 text-[14.5px] outline-none" />
+          <label htmlFor="lib-q" className="sr-only">{tr("Rechercher dans les documents")}</label>
+          <input id="lib-q" value={q} onChange={(e) => setQ(e.target.value)} placeholder={tr("Rechercher dans le contenu : réversibilité, SFTP, palier, hypercare…")} className="w-full bg-transparent py-2.5 text-[14.5px] outline-none" />
           {loading && <span className="text-[12px] text-ink-mute">…</span>}
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="mr-1 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Proposition</span>
-          <button className={chip(scope === "all")} onClick={() => setScope("all")}>Toutes</button>
+          <span className="mr-1 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">{tr("Proposition")}</span>
+          <button className={chip(scope === "all")} onClick={() => setScope("all")}>{tr("Toutes")}</button>
           {VENDOR_IDS.map((v) => <button key={v} className={clsx(chip(scope === v), "inline-flex items-center gap-1.5")} onClick={() => setScope(v)}><VendorDot id={v as VendorId} size={7} />{VENDOR_META[v].short}</button>)}
-          <button className={chip(scope === "transversal")} onClick={() => setScope("transversal")}>Transversal</button>
+          <button className={chip(scope === "transversal")} onClick={() => setScope("transversal")}>{tr("Transversal")}</button>
         </div>
         {!hits && (
           <>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="mr-1 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Nature</span>
-              <button className={chip(nature === "all")} onClick={() => setNature("all")}>Toutes</button>
-              {Object.entries(natures).map(([k, l]) => <button key={k} className={chip(nature === k)} onClick={() => setNature(k)}>{l}</button>)}
+              <span className="mr-1 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">{tr("Nature")}</span>
+              <button className={chip(nature === "all")} onClick={() => setNature("all")}>{tr("Toutes")}</button>
+              {Object.entries(natures).map(([k, l]) => <button key={k} className={chip(nature === k)} onClick={() => setNature(k)}>{tr(l)}</button>)}
             </div>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="mr-1 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Thème</span>
-              <button className={chip(theme === "all")} onClick={() => setTheme("all")}>Tous</button>
-              {Object.entries(THEMES).map(([k, l]) => <button key={k} className={chip(theme === k)} onClick={() => setTheme(k)}>{l}</button>)}
+              <span className="mr-1 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">{tr("Thème")}</span>
+              <button className={chip(theme === "all")} onClick={() => setTheme("all")}>{tr("Tous")}</button>
+              {Object.entries(THEMES).map(([k, l]) => <button key={k} className={chip(theme === k)} onClick={() => setTheme(k)}>{tr(l)}</button>)}
             </div>
           </>
         )}
@@ -105,7 +106,7 @@ export function LibraryClient({ docs, natures, initialQuery }: { docs: DocView[]
 
       {hits ? (
         <div>
-          <p className="mb-3 text-[13px] text-ink-mute">{hits.length} passage{hits.length > 1 ? "s" : ""} correspondant{hits.length > 1 ? "s" : ""}</p>
+          <p className="mb-3 text-[13px] text-ink-mute">{tr(hits.length > 1 ? "{n} passages correspondants" : "{n} passage correspondant", { n: hits.length })}</p>
           <div className="space-y-2.5">
             {hits.map((h) => (
               <Link key={h.chunkId} href={`/bibliotheque/document?id=${encodeURIComponent(h.docId)}&page=${h.page}&q=${encodeURIComponent(q)}#p${h.page}`} className="block rounded-xl border border-paper-line bg-white p-4 shadow-card transition hover:shadow-lift">
@@ -121,14 +122,14 @@ export function LibraryClient({ docs, natures, initialQuery }: { docs: DocView[]
             <section key={g}>
               <h2 className="mb-3 flex items-center gap-2 text-[14px] font-semibold text-ink">
                 {g !== "transversal" && <VendorDot id={g as VendorId} />}
-                {g === "transversal" ? "Documents Caritas et transversaux" : VENDOR_META[g as VendorId].name}
+                {g === "transversal" ? tr("Documents Caritas et transversaux") : VENDOR_META[g as VendorId].name}
                 <span className="font-normal text-ink-mute">({list.length})</span>
               </h2>
               <div className="grid gap-3 md:grid-cols-2">
                 {list.map((d) => (
                   <Link key={d.id} href={`/bibliotheque/document?id=${encodeURIComponent(d.id)}`} className="group rounded-xl2 border border-paper-line bg-white p-5 shadow-card transition hover:shadow-lift">
                     <div className="flex flex-wrap items-center gap-2 text-[11.5px] font-medium uppercase tracking-wide text-ink-mute">
-                      <span>{d.natureLabel}</span><span>·</span><span>{d.format.toUpperCase()}</span><span>·</span><span>{d.pageCount} {d.locatorType}{d.pageCount > 1 ? "s" : ""}</span><span>·</span><span>{d.date}</span>
+                      <span>{tr(d.natureLabel)}</span><span>·</span><span>{d.format.toUpperCase()}</span><span>·</span><span>{d.pageCount} {d.locatorType}{d.pageCount > 1 ? "s" : ""}</span><span>·</span><span>{d.date}</span>
                     </div>
                     <h3 className="mt-1.5 text-[15px] font-semibold leading-snug text-ink group-hover:text-caritas-red">{d.title}</h3>
                     <p className="mt-1 text-[13px] leading-relaxed text-ink-soft">{d.description}</p>

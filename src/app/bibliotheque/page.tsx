@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTitle } from "@/lib/use-title";
+import { tr } from "@/lib/i18n";
 import { PageHeader } from "@/components/ui";
 import { LibraryClient, type DocView } from "@/components/LibraryClient";
 import { getDocuments, NATURE_LABELS } from "@/lib/knowledge";
@@ -25,9 +26,9 @@ function Bibliotheque() {
   return (
     <div>
       <PageHeader
-        eyebrow="Bibliothèque documentaire"
-        title={`${docs.length} documents de référence`}
-        intro="Recherchez dans le contenu de tous les documents, filtrez par proposition, par nature ou par thème, et ouvrez les originaux. La recherche s\'exécute dans votre navigateur."
+        eyebrow={tr("Bibliothèque documentaire")}
+        title={tr("{n} documents de référence", { n: docs.length })}
+        intro={tr("Recherchez dans le contenu de tous les documents, filtrez par proposition, par nature ou par thème, et ouvrez les originaux. La recherche s'exécute dans votre navigateur.")}
       />
       <LibraryClient docs={docs} natures={NATURE_LABELS} initialQuery={params.get("q") ?? undefined} />
     </div>

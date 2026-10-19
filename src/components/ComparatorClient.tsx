@@ -6,6 +6,7 @@ import type { CellStatus, VendorId } from "@/data/types";
 import { VENDOR_IDS, VENDOR_META } from "@/data/vendor-meta";
 import type { ResolvedRef } from "@/lib/refs";
 import { SourceChips, StatusMark, VendorDot, STATUS_LABEL } from "./ui";
+import { tr } from "@/lib/i18n";
 
 export interface DimensionView {
   id: string;
@@ -66,9 +67,9 @@ export function ComparatorClient({ dimensions, focus }: { dimensions: DimensionV
   return (
     <div>
       {/* Contrôles */}
-      <div className="no-print mb-6 space-y-4 rounded-xl2 border border-paper-line bg-white p-5 shadow-card">
+      <div data-tour="comp-controls" className="no-print mb-6 space-y-4 rounded-xl2 border border-paper-line bg-white p-5 shadow-card">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="mr-1 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Propositions</span>
+          <span className="mr-1 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">{tr("Propositions")}</span>
           {VENDOR_IDS.map((v) => (
             <button
               key={v}
@@ -80,22 +81,22 @@ export function ComparatorClient({ dimensions, focus }: { dimensions: DimensionV
               {VENDOR_META[v].name}
             </button>
           ))}
-          <span className="text-[12px] text-ink-mute">(2 minimum)</span>
+          <span className="text-[12px] text-ink-mute">{tr("(2 minimum)")}</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="mr-1 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Vue</span>
+          <span className="mr-1 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">{tr("Vue")}</span>
           {([["matrice", "Vue d'ensemble"], ["detail", "Comparatif détaillé"]] as const).map(([m, l]) => (
             <button key={m} onClick={() => setMode(m)} className={clsx("rounded-full px-3 py-1.5 text-[13px] transition", mode === m ? "bg-caritas-red text-white" : "bg-paper-warm text-ink-soft hover:text-ink")}>
-              {l}
+              {tr(l)}
             </button>
           ))}
         </div>
         {mode === "detail" && (
           <div>
             <div className="mb-2 flex items-center gap-3">
-              <span className="text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Dimensions</span>
-              <button onClick={() => setDims(dimensions.map((d) => d.id))} className="text-[12px] text-ink-soft underline">toutes</button>
-              <button onClick={() => setDims([])} className="text-[12px] text-ink-soft underline">aucune</button>
+              <span className="text-[12px] font-semibold uppercase tracking-wide text-ink-mute">{tr("Dimensions")}</span>
+              <button onClick={() => setDims(dimensions.map((d) => d.id))} className="text-[12px] text-ink-soft underline">{tr("toutes")}</button>
+              <button onClick={() => setDims([])} className="text-[12px] text-ink-soft underline">{tr("aucune")}</button>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {dimensions.map((d) => (
@@ -117,23 +118,23 @@ export function ComparatorClient({ dimensions, focus }: { dimensions: DimensionV
         <>
           <div className="mb-3 flex justify-end">
             <button onClick={() => setOpen(Object.fromEntries(shown.map((d) => [d.id, !allOpen])))} className="text-[12.5px] font-medium text-ink-soft underline underline-offset-2">
-              {allOpen ? "Replier les justifications" : "Déplier toutes les justifications"}
+              {allOpen ? tr("Replier les justifications") : tr("Déplier toutes les justifications")}
             </button>
           </div>
           <div className="space-y-4">
-            {shown.length === 0 && <p className="text-[14px] text-ink-mute">Sélectionnez au moins une dimension.</p>}
+            {shown.length === 0 && <p className="text-[14px] text-ink-mute">{tr("Sélectionnez au moins une dimension.")}</p>}
             {shown.map((d) => (
               <section key={d.id} id={`dim-${d.id}`} className={clsx("scroll-mt-24 overflow-hidden rounded-xl2 border bg-white shadow-card transition-shadow duration-700", flash === d.id ? "border-caritas-orange ring-4 ring-caritas-orange/20" : "border-paper-line")}>
                 <div className="border-b border-paper-line bg-paper-warm/50 px-5 py-4">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <h2 className="text-[16px] font-semibold text-ink">{d.label}</h2>
                     <button onClick={() => setOpen((o) => ({ ...o, [d.id]: !o[d.id] }))} className="text-[12.5px] font-medium text-ink-soft underline underline-offset-2" aria-expanded={!!open[d.id]}>
-                      {open[d.id] ? "Masquer la justification" : "Voir la justification et les sources"}
+                      {open[d.id] ? tr("Masquer la justification") : tr("Voir la justification et les sources")}
                     </button>
                   </div>
                   <p className="mt-1 text-[13px] text-ink-soft">{d.question}</p>
                   <p className="mt-2 text-[12.5px] text-ink-mute">
-                    <span className="font-medium text-ink-soft">Exigence du cahier des charges : </span>
+                    <span className="font-medium text-ink-soft">{tr("Exigence du cahier des charges :")} </span>
                     {d.requirement.text}
                   </p>
                   {open[d.id] && <SourceChips className="mt-2" refs={d.requirement.refs} />}
@@ -173,12 +174,12 @@ function Matrix({ dimensions, vendors, onPick }: { dimensions: DimensionView[]; 
   const [hover, setHover] = useState<{ d: string; v: VendorId } | null>(null);
   const hd = hover && dimensions.find((d) => d.id === hover.d);
   return (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+    <div data-tour="comp-matrix" className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
       <div className="overflow-x-auto rounded-xl2 border border-paper-line bg-white shadow-card scrollbar-thin">
         <table className="w-full min-w-[560px] text-[13.5px]">
           <thead>
             <tr className="border-b border-paper-line bg-paper-warm/60 text-left">
-              <th className="p-3.5 font-semibold text-ink">Dimension</th>
+              <th className="p-3.5 font-semibold text-ink">{tr("Dimension")}</th>
               {vendors.map((v) => (
                 <th key={v} className="p-3.5 text-center font-semibold text-ink">
                   <span className="inline-flex items-center gap-1.5"><VendorDot id={v} />{VENDOR_META[v].short}</span>
@@ -200,7 +201,7 @@ function Matrix({ dimensions, vendors, onPick }: { dimensions: DimensionView[]; 
                       onFocus={() => setHover({ d: d.id, v })}
                       onMouseLeave={() => setHover(null)}
                       className={clsx("grid w-full place-items-center px-3 py-3 transition hover:bg-caritas-beige/40", hover?.d === d.id && hover.v === v && "bg-caritas-beige/50")}
-                      aria-label={`${d.label} · ${VENDOR_META[v].name} : ${STATUS_LABEL[d.cells[v].status]}`}
+                      aria-label={`${d.label} · ${VENDOR_META[v].name} : ${tr(STATUS_LABEL[d.cells[v].status])}`}
                     >
                       <StatusMark status={d.cells[v].status} withLabel={false} />
                     </button>
@@ -210,7 +211,7 @@ function Matrix({ dimensions, vendors, onPick }: { dimensions: DimensionView[]; 
             ))}
           </tbody>
         </table>
-        <p className="border-t border-paper-line px-3.5 py-2.5 text-[12px] text-ink-mute">Survolez une case pour lire le résumé, cliquez pour ouvrir la justification et les sources.</p>
+        <p className="border-t border-paper-line px-3.5 py-2.5 text-[12px] text-ink-mute">{tr("Survolez une case pour lire le résumé, cliquez pour ouvrir la justification et les sources.")}</p>
       </div>
       <aside className="xl:sticky xl:top-6 xl:self-start">
         <div className="rounded-xl2 border border-paper-line bg-white p-5 shadow-card">
@@ -223,8 +224,8 @@ function Matrix({ dimensions, vendors, onPick }: { dimensions: DimensionView[]; 
             </div>
           ) : (
             <div className="text-[13px] leading-relaxed text-ink-mute">
-              <div className="mb-2 text-[12px] font-semibold uppercase tracking-wide">Lecture</div>
-              Chaque case indique ce que la documentation reçue établit pour la dimension. Ce n&apos;est pas une note : « Non précisé » signifie que les documents ne permettent pas de conclure.
+              <div className="mb-2 text-[12px] font-semibold uppercase tracking-wide">{tr("Lecture")}</div>
+              {tr("Chaque case indique ce que la documentation reçue établit pour la dimension. Ce n'est pas une note : « Non précisé » signifie que les documents ne permettent pas de conclure.")}
             </div>
           )}
         </div>

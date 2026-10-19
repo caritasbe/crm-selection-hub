@@ -10,6 +10,7 @@ import { getDocuments } from "@/lib/knowledge";
 import { AskBox } from "@/components/AskBox";
 import { SUGGESTIONS } from "@/data/store";
 import { useTitle } from "@/lib/use-title";
+import { tr } from "@/lib/i18n";
 import { startTour } from "@/components/Tour";
 
 export default function Home() {
@@ -24,15 +25,14 @@ export default function Home() {
         <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-caritas-beige/70 blur-2xl" />
         <div aria-hidden className="pointer-events-none absolute -bottom-28 right-40 h-56 w-56 rounded-full bg-caritas-orange/10 blur-2xl" />
         <div className="relative max-w-3xl">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-caritas-red">Comité de sélection CRM & Marketing Automation</p>
+          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-caritas-red">{tr("Comité de sélection CRM & Marketing Automation")}</p>
           <h1 className="mt-3 text-[32px] font-semibold leading-[1.1] tracking-tight text-ink sm:text-[44px]">CRM Selection Hub</h1>
           <p className="mt-4 text-[16px] leading-relaxed text-ink-soft">
-            L&apos;espace de travail du comité : toutes les offres reçues et les documents du projet, réunis et consultables au même endroit.
-            Recherchez un sujet, comparez les propositions et ouvrez chaque source. L&apos;outil présente les informations, il ne recommande aucune solution.
+            {tr("L'espace de travail du comité : toutes les offres reçues et les documents du projet, réunis et consultables au même endroit. Recherchez un sujet, comparez les propositions et ouvrez chaque source. L'outil présente les informations, il ne recommande aucune solution.")}
           </p>
           <button onClick={startTour} className="mt-5 inline-flex items-center gap-2 rounded-xl border border-paper-line bg-white px-3.5 py-2 text-[13.5px] font-medium text-ink shadow-card transition hover:border-ink-faint">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-caritas-red" aria-hidden><circle cx="12" cy="12" r="9" /><path d="m10 8 6 4-6 4z" fill="currentColor" stroke="none" /></svg>
-            Découvrir l&apos;outil en 2 minutes
+            {tr("Découvrir l'outil en 2 minutes")}
           </button>
           <div className="mt-7"><AskBox suggestions={SUGGESTIONS} /></div>
           <div className="mt-5 flex flex-wrap gap-2 text-[13px]">
@@ -43,7 +43,7 @@ export default function Home() {
               ["/bibliotheque", "Bibliothèque"],
             ].map(([href, label]) => (
               <Link key={href} href={href} className="rounded-full border border-paper-line bg-paper px-3.5 py-1.5 font-medium text-ink-soft transition hover:border-ink-faint hover:text-ink">
-                {label}
+                {tr(label)}
               </Link>
             ))}
           </div>
@@ -52,7 +52,7 @@ export default function Home() {
 
       {/* Contexte */}
       <section>
-        <SectionTitle hint={<SourceChips refs={[resolveRef(PROJECT_CONTEXT.objectiveSource)]} />}>Le projet en bref</SectionTitle>
+        <SectionTitle hint={<SourceChips refs={[resolveRef(PROJECT_CONTEXT.objectiveSource)]} />}>{tr("Le projet en bref")}</SectionTitle>
         <div className="grid gap-4">
           <Card className="p-6">
             <p className="text-[15px] leading-relaxed text-ink">{PROJECT_CONTEXT.objective}</p>
@@ -67,8 +67,8 @@ export default function Home() {
             <SourceChips className="mt-5" refs={resolveRefs(PROJECT_CONTEXT.figures.map((f) => f.source))} max={4} />
           </Card>
           <Card className="p-6">
-            <h3 className="text-[14px] font-semibold text-ink">Comment la donnée doit circuler</h3>
-            <p className="mt-1 text-[13px] leading-snug text-ink-mute">Schéma cible du cahier des charges. Les propositions portent sur l&apos;étape 3, connectée à la base mère (étape 2).</p>
+            <h3 className="text-[14px] font-semibold text-ink">{tr("Comment la donnée doit circuler")}</h3>
+            <p className="mt-1 text-[13px] leading-snug text-ink-mute">{tr("Schéma cible du cahier des charges. Les propositions portent sur l'étape 3, connectée à la base mère (étape 2).")}</p>
             <DataFlow layers={PROJECT_CONTEXT.architecture} />
             <SourceChips className="mt-4" refs={[resolveRef(PROJECT_CONTEXT.architectureSource)]} />
           </Card>
@@ -77,14 +77,14 @@ export default function Home() {
 
       {/* Candidats */}
       <section>
-        <SectionTitle hint="Ordre de présentation du dossier d'évaluation">Les quatre propositions évaluées</SectionTitle>
+        <SectionTitle hint={tr("Ordre de présentation du dossier d'évaluation")}>{tr("Les quatre propositions évaluées")}</SectionTitle>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {VENDOR_ORDER.map((id) => {
             const v = VENDORS[id];
             return (
               <Link key={id} href={`/propositions?id=${id}`} className="group">
                 <Card className="flex h-full flex-col p-5 transition group-hover:shadow-lift">
-                  <div className="flex items-center gap-2"><VendorDot id={id} size={12} /><span className="text-[12px] font-medium text-ink-mute">{v.partner === v.name ? "Éditeur et intégrateur" : `Partenaire : ${v.partner}`}</span></div>
+                  <div className="flex items-center gap-2"><VendorDot id={id} size={12} /><span className="text-[12px] font-medium text-ink-mute">{v.partner === v.name ? tr("Éditeur et intégrateur") : tr("Partenaire : {p}", { p: v.partner })}</span></div>
                   <h3 className="mt-3 text-[18px] font-semibold leading-snug tracking-tight text-ink">{v.name}</h3>
                   <p className="mt-2 text-[13px] leading-snug text-ink-soft">{v.tagline}</p>
                   <ul className="mt-4 space-y-1.5 text-[12.5px] text-ink-mute">
@@ -93,8 +93,8 @@ export default function Home() {
                     ))}
                   </ul>
                   <div className="mt-auto flex items-center justify-between pt-5 text-[12.5px]">
-                    <span className="text-ink-mute">{v.documents.length} document{v.documents.length > 1 ? "s" : ""} dans le dossier</span>
-                    <span className="shrink-0 font-medium text-ink group-hover:text-caritas-red">Voir&nbsp;→</span>
+                    <span className="text-ink-mute">{tr(v.documents.length > 1 ? "{n} documents dans le dossier" : "{n} document dans le dossier", { n: v.documents.length })}</span>
+                    <span className="shrink-0 font-medium text-ink group-hover:text-caritas-red">{tr("Voir")}&nbsp;→</span>
                   </div>
                 </Card>
               </Link>
@@ -105,8 +105,8 @@ export default function Home() {
 
       {/* Dimensions d'évaluation */}
       <section>
-        <SectionTitle hint={<Link className="font-medium text-ink underline underline-offset-2" href="/methode">Méthode complète</Link>}>
-          Les grandes dimensions de l&apos;évaluation
+        <SectionTitle hint={<Link className="font-medium text-ink underline underline-offset-2" href="/methode">{tr("Méthode complète")}</Link>}>
+          {tr("Les grandes dimensions de l'évaluation")}
         </SectionTitle>
         <Card className="p-6">
           <div className="flex h-3 overflow-hidden rounded-full">
@@ -129,7 +129,7 @@ export default function Home() {
             ))}
           </div>
           <p className="mt-5 border-t border-paper-line pt-4 text-[12.5px] text-ink-mute">
-            Le score et le coût sont deux lectures distinctes.
+            {tr("Le score et le coût sont deux lectures distinctes.")}
           </p>
           <SourceChips className="mt-3" refs={resolveRefs([{ doc: "eval", page: 1 }, { doc: "eval", page: 2 }])} />
         </Card>
@@ -138,15 +138,15 @@ export default function Home() {
       {/* Sujets en discussion + calendrier */}
       <section className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
         <div>
-          <SectionTitle hint={<Link className="font-medium text-ink underline underline-offset-2" href="/questions">Toutes les questions ({QUESTIONS.length})</Link>}>
-            Sujets encore en discussion
+          <SectionTitle hint={<Link className="font-medium text-ink underline underline-offset-2" href="/questions">{tr("Toutes les questions ({n})", { n: QUESTIONS.length })}</Link>}>
+            {tr("Sujets encore en discussion")}
           </SectionTitle>
           <Card className="divide-y divide-paper-line">
             {transversal.slice(0, 5).map((q) => (
               <div key={q.id} className="p-5">
                 <div className="flex flex-wrap items-center gap-2">
                   <Pill tone={q.type === "contradiction" ? "accent" : q.type === "vigilance" ? "warm" : "neutral"}>
-                    {q.type === "soulevee" ? "Soulevé dans la documentation" : q.type === "vigilance" ? "Point de vigilance" : "Contradiction"}
+                    {tr(q.type === "soulevee" ? "Soulevé dans la documentation" : q.type === "vigilance" ? "Point de vigilance" : "Contradiction")}
                   </Pill>
                 </div>
                 <h3 className="mt-2 text-[14.5px] font-semibold text-ink">{q.title}</h3>
@@ -155,7 +155,7 @@ export default function Home() {
               </div>
             ))}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 bg-paper/60 px-5 py-3.5 text-[12.5px]">
-              <span className="text-ink-mute">Par proposition :</span>
+              <span className="text-ink-mute">{tr("Par proposition :")}</span>
               {VENDOR_ORDER.map((id) => (
                 <Link key={id} href={`/questions?scope=${id}`} className="inline-flex items-center gap-1.5 font-medium text-ink-soft hover:text-ink">
                   <VendorDot id={id} size={8} />{VENDORS[id].short}
@@ -165,7 +165,7 @@ export default function Home() {
           </Card>
         </div>
         <div>
-          <SectionTitle>Calendrier</SectionTitle>
+          <SectionTitle>{tr("Calendrier")}</SectionTitle>
           <Card className="p-6">
             <ol className="relative space-y-4 border-l border-paper-line pl-5">
               {TIMELINE.map((t) => (
@@ -182,7 +182,7 @@ export default function Home() {
       </section>
 
       <p className="text-center text-[12.5px] text-ink-mute">
-        Cet outil restitue le contenu des documents sans recommander de solution. Le dossier d&apos;évaluation V3 reste la référence pour les critères et les évaluations du comité.
+        {tr("Cet outil restitue le contenu des documents sans recommander de solution.")}
       </p>
     </div>
   );
@@ -194,7 +194,7 @@ function DataFlow({ layers }: { layers: { layer: string; text: string }[] }) {
   return (
     <ol className="mt-5 grid gap-2 sm:grid-cols-4 sm:gap-0">
       {layers.map((l, i) => {
-        const [main, ...rest] = l.text.replace(/\.$/, "").split(" : ");
+        const [main, ...rest] = l.text.replace(/\.$/, "").split(/ ?: /);
         const items = (rest.length ? rest.join(" : ") : main).split(/, |\. /).map((x) => x.trim()).filter(Boolean);
         const hub = i === 1;
         return (
