@@ -129,7 +129,7 @@ export default function Home() {
             ))}
           </div>
           <p className="mt-5 border-t border-paper-line pt-4 text-[12.5px] text-ink-mute">
-            Prérequis éliminatoires et constats techniques sont établis dans la fiche technique, hors notation. Le score et le coût sont deux lectures distinctes.
+            Le score et le coût sont deux lectures distinctes.
           </p>
           <SourceChips className="mt-3" refs={resolveRefs([{ doc: "eval", page: 1 }, { doc: "eval", page: 2 }])} />
         </Card>

@@ -6,9 +6,8 @@ import { useTitle } from "@/lib/use-title";
 import { PageHeader } from "@/components/ui";
 import { ComparatorClient, type DimensionView } from "@/components/ComparatorClient";
 import { DIMENSIONS } from "@/data/comparison";
-import { TECH_CHECKS } from "@/data/evaluation";
 import { VENDOR_IDS } from "@/data/vendor-meta";
-import { resolveRefs, resolveRef } from "@/lib/refs";
+import { resolveRefs } from "@/lib/refs";
 
 export default function ComparateurPage() {
   return (
@@ -43,7 +42,7 @@ function Comparateur() {
           </>
         }
       />
-      <ComparatorClient dimensions={dims} techChecks={TECH_CHECKS} techRef={resolveRef({ doc: "eval", page: 3 })} focus={focus} />
+      <ComparatorClient dimensions={dims} focus={focus} />
     </div>
   );
 }

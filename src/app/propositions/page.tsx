@@ -4,14 +4,12 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import clsx from "clsx";
-import { Card, SectionTitle, SourceChips, VendorDot, FactValue, Pill } from "@/components/ui";
+import { Card, SectionTitle, SourceChips, VendorDot, Pill } from "@/components/ui";
 import { VENDORS, VENDOR_ORDER } from "@/data/vendors";
-import { TECH_CHECKS } from "@/data/evaluation";
 import { QUESTIONS, THEME_LABELS } from "@/data/questions";
 import type { VendorId } from "@/data/types";
 import { resolveRefs } from "@/lib/refs";
 import { getDocument, NATURE_LABELS } from "@/lib/knowledge";
-import { VENDOR_TERMS } from "@/data/store";
 import { useTitle } from "@/lib/use-title";
 
 const SECTIONS = [
@@ -23,7 +21,6 @@ const SECTIONS = [
   ["mise-en-oeuvre", "Mise en œuvre"],
   ["contrat", "Contrat"],
   ["limites", "Limites et dépendances"],
-  ["fiche", "Fiche technique"],
   ["questions", "Questions ouvertes"],
   ["documents", "Documents sources"],
 ] as const;
@@ -51,13 +48,6 @@ export default function PropositionPage() {
       <Proposition />
     </Suspense>
   );
-}
-
-/** Extrait de la note de la fiche technique propre à cette proposition. */
-function noteFor(note: string, id: VendorId, short: string): string {
-  const parts = note.split(" · ");
-  const terms = (VENDOR_TERMS[id] ?? []).map((t) => t.toLowerCase());
-  return parts.find((s) => s.toLowerCase().includes(short.toLowerCase())) ?? parts.find((s) => terms.some((t) => s.toLowerCase().includes(t))) ?? note;
 }
 
 function Proposition() {
@@ -165,27 +155,6 @@ function Proposition() {
                 </div>
               ))}
             </Card>
-          </section>
-
-          <section id="fiche" className="scroll-mt-8">
-            <SectionTitle hint="Constats établis par le comité, hors notation">Fiche technique du dossier d&apos;évaluation</SectionTitle>
-            <Card className="overflow-hidden">
-              <table className="w-full text-[13.5px]">
-                <tbody className="divide-y divide-paper-line">
-                  {TECH_CHECKS.map((t) => (
-                    <tr key={t.label} className="align-top">
-                      <td className="w-[44%] p-4 text-ink-soft">
-                        {t.label}
-                        {t.group === "prerequis" && <span className="ml-2 align-middle"><Pill>Prérequis</Pill></span>}
-                      </td>
-                      <td className="w-[90px] p-4"><FactValue value={t.values[id]} /></td>
-                      <td className="p-4 text-[12.5px] text-ink-mute">{noteFor(t.note, id, v.short)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </Card>
-            <SourceChips className="mt-2" refs={resolveRefs([{ doc: "eval", page: 3 }])} />
           </section>
 
           <section id="questions" className="scroll-mt-8">

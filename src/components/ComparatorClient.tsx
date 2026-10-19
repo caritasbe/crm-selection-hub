@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
-import type { CellStatus, TechCheck, VendorId } from "@/data/types";
+import type { CellStatus, VendorId } from "@/data/types";
 import { VENDOR_IDS, VENDOR_META } from "@/data/vendor-meta";
 import type { ResolvedRef } from "@/lib/refs";
-import { SourceChips, StatusMark, VendorDot, FactValue, STATUS_LABEL } from "./ui";
+import { SourceChips, StatusMark, VendorDot, STATUS_LABEL } from "./ui";
 
 export interface DimensionView {
   id: string;
@@ -17,10 +17,10 @@ export interface DimensionView {
 
 const PREF_KEY = "crmhub.comparator.v1";
 
-export function ComparatorClient({ dimensions, techChecks, techRef, focus }: { dimensions: DimensionView[]; techChecks: TechCheck[]; techRef: ResolvedRef; focus?: string }) {
+export function ComparatorClient({ dimensions, focus }: { dimensions: DimensionView[]; focus?: string }) {
   const [vendors, setVendors] = useState<VendorId[]>(VENDOR_IDS);
   const [dims, setDims] = useState<string[]>(dimensions.map((d) => d.id));
-  const [mode, setMode] = useState<"matrice" | "detail" | "fiche">(focus ? "detail" : "matrice");
+  const [mode, setMode] = useState<"matrice" | "detail">(focus ? "detail" : "matrice");
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [flash, setFlash] = useState<string | null>(null);
   const pendingScroll = useRef<string | null>(null);
@@ -84,7 +84,7 @@ export function ComparatorClient({ dimensions, techChecks, techRef, focus }: { d
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="mr-1 text-[12px] font-semibold uppercase tracking-wide text-ink-mute">Vue</span>
-          {([["matrice", "Vue d'ensemble"], ["detail", "Comparatif détaillé"], ["fiche", "Fiche technique du comité"]] as const).map(([m, l]) => (
+          {([["matrice", "Vue d'ensemble"], ["detail", "Comparatif détaillé"]] as const).map(([m, l]) => (
             <button key={m} onClick={() => setMode(m)} className={clsx("rounded-full px-3 py-1.5 text-[13px] transition", mode === m ? "bg-caritas-red text-white" : "bg-paper-warm text-ink-soft hover:text-ink")}>
               {l}
             </button>
@@ -164,24 +164,7 @@ export function ComparatorClient({ dimensions, techChecks, techRef, focus }: { d
             ))}
           </div>
         </>
-      ) : (
-        <div className="overflow-x-auto rounded-xl2 border border-paper-line bg-white shadow-card scrollbar-thin">
-          <table className="w-full min-w-[760px] text-[13.5px]">
-            <thead>
-              <tr className="border-b border-paper-line bg-paper-warm/60 text-left">
-                <th className="p-4 font-semibold text-ink">Point vérifié</th>
-                {vendors.map((v) => <th key={v} className="p-4 font-semibold text-ink"><span className="inline-flex items-center gap-2"><VendorDot id={v} />{VENDOR_META[v].short}</span></th>)}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-paper-line">
-              {(["prerequis", "constat"] as const).map((g) => (
-                <FicheGroup key={g} group={g} checks={techChecks.filter((t) => t.group === g)} vendors={vendors} />
-              ))}
-            </tbody>
-          </table>
-          <div className="border-t border-paper-line p-4"><SourceChips refs={[techRef]} /></div>
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -247,26 +230,5 @@ function Matrix({ dimensions, vendors, onPick }: { dimensions: DimensionView[]; 
         </div>
       </aside>
     </div>
-  );
-}
-
-function FicheGroup({ group, checks, vendors }: { group: "prerequis" | "constat"; checks: TechCheck[]; vendors: VendorId[] }) {
-  return (
-    <>
-      <tr className="bg-paper">
-        <td colSpan={vendors.length + 1} className="px-4 py-2 text-[11.5px] font-semibold uppercase tracking-wide text-ink-mute">
-          {group === "prerequis" ? "Prérequis éliminatoires · un « Non » écarte le candidat" : "Constats techniques · informatifs, non éliminatoires"}
-        </td>
-      </tr>
-      {checks.map((t) => (
-        <tr key={t.label} className="align-top">
-          <td className="p-4">
-            <div className="font-medium text-ink">{t.label}</div>
-            <div className="mt-1 text-[12px] leading-relaxed text-ink-mute">{t.note}</div>
-          </td>
-          {vendors.map((v) => <td key={v} className="p-4"><FactValue value={t.values[v]} /></td>)}
-        </tr>
-      ))}
-    </>
   );
 }

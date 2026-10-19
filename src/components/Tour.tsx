@@ -34,13 +34,13 @@ const STEPS: Step[] = [
     target: "propositions",
     title: "Propositions : une fiche par offre",
     text: "Chaque proposition est décrite avec la même structure, dans l'ordre du dossier d'évaluation.",
-    bullets: ["Composants, périmètre, intégrations, finances, mise en œuvre, contrat.", "Limites documentées, fiche technique du comité, questions ouvertes.", "Onglets en haut de page pour passer d'une offre à l'autre."],
+    bullets: ["Composants, périmètre, intégrations, finances, mise en œuvre, contrat.", "Limites documentées et questions ouvertes.", "Onglets en haut de page pour passer d'une offre à l'autre."],
   },
   {
     target: "comparateur",
     title: "Comparateur : les offres dimension par dimension",
     text: "La vue d'ensemble montre, pour chaque dimension, ce que la documentation établit. Ce n'est pas une note.",
-    bullets: ["Survolez une case pour lire le résumé, cliquez pour la justification et les sources.", "Choisissez les propositions et les dimensions à afficher.", "Vue « Fiche technique du comité » : prérequis et constats."],
+    bullets: ["Survolez une case pour lire le résumé, cliquez pour la justification et les sources.", "Choisissez les propositions et les dimensions à afficher."],
   },
   {
     target: "finances",
