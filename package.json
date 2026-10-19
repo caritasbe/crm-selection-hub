@@ -1,0 +1,40 @@
+{
+  "name": "caritas-crm-selection-hub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CARITAS · CRM SELECTION HUB : espace de consultation chiffré du comité de sélection CRM, publié sur GitHub Pages",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "preview": "npx --yes serve@14.2.4 out -l 3000",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts $(ls private/tests/*.test.ts 2>/dev/null)",
+    "ingest": "python3 scripts/ingest.py",
+    "seal": "tsx scripts/seal.ts",
+    "unseal": "tsx scripts/unseal.ts",
+    "check": "tsx scripts/check-public.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.1.0",
+    "clsx": "^2.1.1",
+    "next": "^14.2.33",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.6.1",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.33",
+    "postcss": "^8.5.31",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.23.15",
+    "typescript": "^5.6.3"
+  }
+}

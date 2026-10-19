@@ -1,0 +1,48 @@
+@import "@fontsource-variable/inter";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: "Inter Variable", "Inter", system-ui, sans-serif;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  @apply bg-paper text-ink antialiased;
+  font-feature-settings: "cv11", "ss01", "tnum" 0;
+}
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* Rendu des réponses de l'assistant */
+.prose-answer { @apply text-[15px] leading-relaxed text-ink; }
+.prose-answer h1, .prose-answer h2, .prose-answer h3 { @apply font-semibold text-ink mt-5 mb-2; }
+.prose-answer h1 { @apply text-lg; } .prose-answer h2 { @apply text-base; } .prose-answer h3 { @apply text-[15px]; }
+.prose-answer p { @apply my-2; }
+.prose-answer ul { @apply list-disc pl-5 my-2 space-y-1; }
+.prose-answer ol { @apply list-decimal pl-5 my-2 space-y-1; }
+.prose-answer strong { @apply font-semibold; }
+.prose-answer table { @apply w-full text-sm my-3 border-collapse; }
+.prose-answer th { @apply text-left font-semibold bg-paper-warm px-3 py-2 border border-paper-line align-top; }
+.prose-answer td { @apply px-3 py-2 border border-paper-line align-top; }
+.prose-answer code { @apply text-[13px] bg-paper-warm px-1 rounded; }
+.prose-answer blockquote { @apply border-l-2 border-caritas-orange pl-3 text-ink-soft; }
+
+.scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #DCD2CD; border-radius: 8px; }
+
+mark { background: #FCE3D8; color: inherit; border-radius: 2px; padding: 0 1px; }
+
+@media print {
+  nav, .no-print { display: none !important; }
+}
+
+/* Empêche les enfants de grilles / flex de déborder sur mobile (largeur minimale auto) */
+.grid > *, main { min-width: 0; }
+html, body { overflow-x: clip; }
+
+@keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+@keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(3px); } }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.animate-rise { animation: rise .35s ease-out both; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

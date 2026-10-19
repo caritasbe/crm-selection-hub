@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+*.tsbuildinfo
+next-env.d.ts
+.env*
+
+# Données confidentielles en clair : jamais dans Git.
+# Seule leur version chiffrée (public/vault/) est publiée.
+private/
+tests/_probe*.ts

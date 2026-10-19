@@ -1,0 +1,1 @@
+export { DIMENSIONS } from "./store";
