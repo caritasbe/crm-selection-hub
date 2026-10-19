@@ -3,19 +3,19 @@
 import Link from "next/link";
 import { Card, SectionTitle, SourceChips, VendorDot, Pill } from "@/components/ui";
 import { VENDORS, VENDOR_ORDER } from "@/data/vendors";
-import { FAMILIES, PROJECT_CONTEXT, TIMELINE, OFFER_DEADLINES } from "@/data/evaluation";
+import { FAMILIES, PROJECT_CONTEXT, TIMELINE } from "@/data/evaluation";
 import { QUESTIONS } from "@/data/questions";
 import { resolveRef, resolveRefs } from "@/lib/refs";
 import { getDocuments } from "@/lib/knowledge";
 import { AskBox } from "@/components/AskBox";
 import { SUGGESTIONS } from "@/data/store";
 import { useTitle } from "@/lib/use-title";
+import { startTour } from "@/components/Tour";
 
 export default function Home() {
   useTitle("Accueil");
   const docs = getDocuments();
   const transversal = QUESTIONS.filter((q) => q.scope.includes("transversal"));
-  const deadlines = OFFER_DEADLINES.map((d) => ({ ...d, ref: resolveRef(d.source) }));
 
   return (
     <div className="space-y-12">
@@ -25,13 +25,15 @@ export default function Home() {
         <div aria-hidden className="pointer-events-none absolute -bottom-28 right-40 h-56 w-56 rounded-full bg-caritas-orange/10 blur-2xl" />
         <div className="relative max-w-3xl">
           <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-caritas-red">Comité de sélection CRM & Marketing Automation</p>
-          <h1 className="mt-3 text-[32px] font-semibold leading-[1.1] tracking-tight text-ink sm:text-[44px]">
-            Préparer la décision, à partir des documents.
-          </h1>
+          <h1 className="mt-3 text-[32px] font-semibold leading-[1.1] tracking-tight text-ink sm:text-[44px]">CRM Selection Hub</h1>
           <p className="mt-4 text-[16px] leading-relaxed text-ink-soft">
-            Quatre propositions, {docs.length} documents de référence et un dossier d&apos;évaluation. Cherchez un sujet dans tout le dossier, comparez les offres
-            sur les critères qui vous importent et remontez à chaque source.
+            L&apos;espace de travail du comité : toutes les offres reçues et les documents du projet, réunis et consultables au même endroit.
+            Recherchez un sujet, comparez les propositions et ouvrez chaque source. L&apos;outil présente les informations, il ne recommande aucune solution.
           </p>
+          <button onClick={startTour} className="mt-5 inline-flex items-center gap-2 rounded-xl border border-paper-line bg-white px-3.5 py-2 text-[13.5px] font-medium text-ink shadow-card transition hover:border-ink-faint">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-caritas-red" aria-hidden><circle cx="12" cy="12" r="9" /><path d="m10 8 6 4-6 4z" fill="currentColor" stroke="none" /></svg>
+            Découvrir l&apos;outil en 2 minutes
+          </button>
           <div className="mt-7"><AskBox suggestions={SUGGESTIONS} /></div>
           <div className="mt-5 flex flex-wrap gap-2 text-[13px]">
             {[
@@ -51,7 +53,7 @@ export default function Home() {
       {/* Contexte */}
       <section>
         <SectionTitle hint={<SourceChips refs={[resolveRef(PROJECT_CONTEXT.objectiveSource)]} />}>Le projet en bref</SectionTitle>
-        <div className="grid gap-4 lg:grid-cols-[1.1fr_1fr]">
+        <div className="grid gap-4">
           <Card className="p-6">
             <p className="text-[15px] leading-relaxed text-ink">{PROJECT_CONTEXT.objective}</p>
             <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
@@ -65,20 +67,9 @@ export default function Home() {
             <SourceChips className="mt-5" refs={resolveRefs(PROJECT_CONTEXT.figures.map((f) => f.source))} max={4} />
           </Card>
           <Card className="p-6">
-            <h3 className="text-[14px] font-semibold text-ink">Architecture cible du cahier des charges</h3>
-            <ol className="mt-4 space-y-2.5">
-              {PROJECT_CONTEXT.architecture.map((a, i) => (
-                <li key={a.layer} className="flex gap-3">
-                  <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-md text-[12px] font-semibold text-white" style={{ background: ["#FF5823", "#E20817", "#B8237E", "#1A1615"][i] }}>
-                    {i + 1}
-                  </span>
-                  <div>
-                    <div className="text-[13.5px] font-medium text-ink">{a.layer.replace(/^\d\.\s*/, "")}</div>
-                    <div className="text-[13px] leading-snug text-ink-mute">{a.text}</div>
-                  </div>
-                </li>
-              ))}
-            </ol>
+            <h3 className="text-[14px] font-semibold text-ink">Comment la donnée doit circuler</h3>
+            <p className="mt-1 text-[13px] leading-snug text-ink-mute">Schéma cible du cahier des charges. Les propositions portent sur l&apos;étape 3, connectée à la base mère (étape 2).</p>
+            <DataFlow layers={PROJECT_CONTEXT.architecture} />
             <SourceChips className="mt-4" refs={[resolveRef(PROJECT_CONTEXT.architectureSource)]} />
           </Card>
         </div>
@@ -178,24 +169,14 @@ export default function Home() {
           <Card className="p-6">
             <ol className="relative space-y-4 border-l border-paper-line pl-5">
               {TIMELINE.map((t) => (
-                <li key={t.date + t.label} className="relative">
+                <li key={t.label} className="relative">
                   <span className="absolute -left-[26px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-ink-faint ring-1 ring-paper-line" />
-                  <div className="text-[12px] font-semibold text-ink-mute tnum">{t.date}</div>
+                  {t.date && <div className="text-[12px] font-semibold text-ink-mute tnum">{t.date}</div>}
                   <div className="text-[13.5px] text-ink">{t.label}</div>
                 </li>
               ))}
             </ol>
-            <SourceChips className="mt-4" refs={resolveRefs(TIMELINE.map((t) => t.source))} max={3} />
-            <h3 className="mt-6 border-t border-paper-line pt-5 text-[13px] font-semibold text-ink">Validité des offres</h3>
-            <ul className="mt-3 space-y-2">
-              {deadlines.map((d) => (
-                <li key={d.vendor} className="flex items-start gap-2 text-[13px] text-ink-soft">
-                  <span className="mt-1.5"><VendorDot id={d.vendor} size={8} /></span>
-                  <span>{d.label}</span>
-                </li>
-              ))}
-            </ul>
-            <SourceChips className="mt-3" refs={deadlines.map((d) => d.ref)} />
+            <SourceChips className="mt-4" refs={resolveRefs(TIMELINE.flatMap((t) => (t.source ? [t.source] : [])))} max={3} />
           </Card>
         </div>
       </section>
@@ -204,5 +185,45 @@ export default function Home() {
         Cet outil restitue le contenu des documents sans recommander de solution. Le dossier d&apos;évaluation V3 reste la référence pour les critères et les évaluations du comité.
       </p>
     </div>
+  );
+}
+
+const FLOW_COLORS = ["#FF5823", "#E20817", "#B8237E", "#1A1615"];
+
+function DataFlow({ layers }: { layers: { layer: string; text: string }[] }) {
+  return (
+    <ol className="mt-5 grid gap-2 sm:grid-cols-4 sm:gap-0">
+      {layers.map((l, i) => {
+        const [main, ...rest] = l.text.replace(/\.$/, "").split(" : ");
+        const items = (rest.length ? rest.join(" : ") : main).split(/, |\. /).map((x) => x.trim()).filter(Boolean);
+        const hub = i === 1;
+        return (
+          <li key={l.layer} className="relative flex flex-col">
+            <div className={`flex-1 rounded-xl border p-3 sm:mr-4 ${hub ? "border-caritas-red/40 bg-caritas-red/[0.04]" : "border-paper-line bg-paper/60"}`}>
+              <div className="flex items-center gap-2">
+                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md text-[11px] font-semibold text-white" style={{ background: FLOW_COLORS[i] }}>{i + 1}</span>
+                <span className="text-[12.5px] font-semibold leading-tight text-ink">{l.layer.replace(/^\d\.\s*/, "")}</span>
+              </div>
+              {rest.length > 0 && <div className="mt-2 text-[12.5px] font-medium leading-snug text-ink">{main}</div>}
+              <ul className="mt-2 flex flex-wrap gap-1">
+                {items.map((x) => (
+                  <li key={x} className="rounded-md bg-white px-1.5 py-0.5 text-[11.5px] leading-snug text-ink-soft ring-1 ring-paper-line">{x}</li>
+                ))}
+              </ul>
+            </div>
+            {i < layers.length - 1 && (
+              <span aria-hidden className="pointer-events-none absolute z-10 hidden text-ink-faint sm:right-[-2px] sm:top-1/2 sm:block sm:-translate-y-1/2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+              </span>
+            )}
+            {i < layers.length - 1 && (
+              <span aria-hidden className="mx-auto py-0.5 text-ink-faint sm:hidden">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M12 5v13M6 13l6 6 6-6" /></svg>
+              </span>
+            )}
+          </li>
+        );
+      })}
+    </ol>
   );
 }

@@ -23,7 +23,7 @@ export interface StructuredData {
   EVALUATORS: { name: string; fn: string; w: Record<FamilyId, number> }[];
   WEIGHTS_NOTE: string;
   TECH_CHECKS: TechCheck[];
-  TIMELINE: { date: string; label: string; source: Ref }[];
+  TIMELINE: { date: string | null; label: string; source?: Ref }[];
   OFFER_DEADLINES: { vendor: VendorId; label: string; date: string | null; source: Ref }[];
   PROJECT_CONTEXT: {
     objective: string;

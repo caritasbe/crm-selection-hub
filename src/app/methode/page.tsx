@@ -13,7 +13,7 @@ export default function MethodePage() {
       <PageHeader
         eyebrow="Méthode & critères"
         title="Comment le comité évalue"
-        intro="Reprise fidèle du dossier d'évaluation V3, qui reste la référence. Cet outil n'attribue, ne calcule et n'affiche aucune note."
+        intro="Cette section fait référence au dossier d'évaluation."
       />
 
       <section>

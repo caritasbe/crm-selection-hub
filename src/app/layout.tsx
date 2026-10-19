@@ -3,6 +3,7 @@ import "./globals.css";
 import { Shell } from "@/components/Shell";
 import { VaultGate } from "@/components/VaultGate";
 import { CommandPalette } from "@/components/CommandPalette";
+import { Tour } from "@/components/Tour";
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <VaultGate>
           <Shell>{children}</Shell>
           <CommandPalette />
+          <Tour />
         </VaultGate>
       </body>
     </html>
