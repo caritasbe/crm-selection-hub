@@ -4,7 +4,7 @@
  * la clé est dérivée localement, puis les fichiers chiffrés sont téléchargés et déchiffrés en mémoire.
  */
 import { decrypt, deriveKey, exportKey, fromB64, gunzip, importKey, type VaultMeta } from "./crypto";
-import { hydrate, type VaultPayload } from "@/data/store";
+import { hydrate, KNOWLEDGE, type VaultPayload } from "@/data/store";
 import { getDocument, MIME, originalFileName } from "./knowledge";
 
 export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -93,4 +93,47 @@ export async function openOriginal(docId: string): Promise<{ url: string; filena
   const bytes = await decrypt(_key, await fetchBytes(`files/${file}`));
   const blob = new Blob([bytes as BlobPart], { type: MIME[doc.format] });
   return { url: URL.createObjectURL(blob), filename: doc.file.split("/").pop() || `${doc.id}.${doc.format}` };
+}
+
+const _pdfCache = new Map<string, Promise<Uint8Array>>();
+const _thumbCache = new Map<string, Promise<string | null>>();
+
+/** PDF d'affichage d'un document (original PDF ou conversion), déchiffré en mémoire. */
+export function loadViewPdf(docId: string): Promise<Uint8Array> {
+  if (!_pdfCache.has(docId)) {
+    const p = (async () => {
+      if (!_key) throw new Error("Coffre verrouillé.");
+      const file = KNOWLEDGE.views?.[docId]?.pdf;
+      if (!file) throw new Error("Original indisponible.");
+      return decrypt(_key, await fetchBytes(`files/${file}`));
+    })();
+    p.catch(() => _pdfCache.delete(docId));
+    _pdfCache.set(docId, p);
+  }
+  // PDF.js transfère le tampon au worker : on lui donne une copie
+  return _pdfCache.get(docId)!.then((b) => b.slice());
+}
+
+export function hasViewPdf(docId: string): boolean {
+  return !!KNOWLEDGE.views?.[docId]?.pdf;
+}
+
+/** Vignette de la première page (URL locale), ou null si indisponible. */
+export function thumbUrl(docId: string): Promise<string | null> {
+  if (!_thumbCache.has(docId)) {
+    _thumbCache.set(
+      docId,
+      (async () => {
+        const file = KNOWLEDGE.views?.[docId]?.thumb;
+        if (!_key || !file) return null;
+        try {
+          const bytes = await decrypt(_key, await fetchBytes(`files/${file}`));
+          return URL.createObjectURL(new Blob([bytes as BlobPart], { type: "image/jpeg" }));
+        } catch {
+          return null;
+        }
+      })(),
+    );
+  }
+  return _thumbCache.get(docId)!;
 }

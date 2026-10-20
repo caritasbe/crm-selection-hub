@@ -55,13 +55,32 @@ async function main() {
     else fs.writeFileSync(dest, await encrypt(key, new Uint8Array(bytes)));
     files[d.id] = name;
   }
-  const keep = new Set(Object.values(files));
+  // Affichage : PDF (l'original s'il est en PDF, sinon la conversion) et vignette de la première page
+  const R = path.join(PRIV, "renditions");
+  const views: Record<string, { pdf?: string; thumb?: string }> = {};
+  const sealExtra = async (id: string, kind: string, p: string) => {
+    if (!fs.existsSync(p)) return undefined;
+    const bytes = fs.readFileSync(p);
+    const name = crypto.createHash("sha256").update(salt).update(id).update(kind).update(bytes).digest("hex").slice(0, 32) + ".bin";
+    const dest = path.join(FILES, name);
+    if (!fs.existsSync(dest)) fs.writeFileSync(dest, await encrypt(key, new Uint8Array(bytes)));
+    return name;
+  };
+  for (const d of documents) {
+    const v: { pdf?: string; thumb?: string } = {};
+    v.pdf = d.format === "pdf" ? files[d.id] : await sealExtra(d.id, "pdf", path.join(R, `${d.id}.pdf`));
+    v.thumb = await sealExtra(d.id, "thumb", path.join(R, `${d.id}.jpg`));
+    if (!v.thumb) console.warn(`  vignette absente : ${d.id} (npm run ingest)`);
+    views[d.id] = v;
+  }
+
+  const keep = new Set([...Object.values(files), ...Object.values(views).flatMap((v) => [v.pdf, v.thumb].filter(Boolean) as string[])]);
   for (const f of fs.readdirSync(FILES)) if (!keep.has(f)) fs.rmSync(path.join(FILES, f));
 
   const enPath = path.join(PRIV, "i18n", "en.json");
   const en: Record<string, string> = fs.existsSync(enPath) ? JSON.parse(fs.readFileSync(enPath, "utf-8")) : {};
   if (!Object.keys(en).length) console.warn("  aucune traduction anglaise (private/i18n/en.json) : la version EN affichera le français.");
-  const payload: VaultPayload = { version: 1, sealedAt: new Date().toISOString(), data, knowledge: { documents, chunks, pages, files }, i18n: { en } };
+  const payload: VaultPayload = { version: 1, sealedAt: new Date().toISOString(), data, knowledge: { documents, chunks, pages, files, views }, i18n: { en } };
 
   // Archive des sources éditables, pour pouvoir tout restaurer depuis le dépôt (npm run unseal)
   const tgz = execFileSync("tar", ["-czf", "-", "-C", PRIV, "data", "manifest.json", ...["tests", "i18n"].filter((d) => fs.existsSync(path.join(PRIV, d)))]);

@@ -10,6 +10,7 @@ import { search, snippet } from "@/lib/search";
 import { getDocument } from "@/lib/knowledge";
 import { resolveRef } from "@/lib/refs";
 import { tr } from "@/lib/i18n";
+import { DocThumb } from "./DocThumb";
 
 export interface DocView {
   id: string; title: string; issuer: string; date: string; vendors: string[]; nature: string; natureLabel: string;
@@ -127,13 +128,16 @@ export function LibraryClient({ docs, natures, initialQuery }: { docs: DocView[]
               </h2>
               <div className="grid gap-3 md:grid-cols-2">
                 {list.map((d) => (
-                  <Link key={d.id} href={`/bibliotheque/document?id=${encodeURIComponent(d.id)}`} className="group rounded-xl2 border border-paper-line bg-white p-5 shadow-card transition hover:shadow-lift">
-                    <div className="flex flex-wrap items-center gap-2 text-[11.5px] font-medium uppercase tracking-wide text-ink-mute">
-                      <span>{tr(d.natureLabel)}</span><span>·</span><span>{d.format.toUpperCase()}</span><span>·</span><span>{d.pageCount} {d.locatorType}{d.pageCount > 1 ? "s" : ""}</span><span>·</span><span>{d.date}</span>
+                  <Link key={d.id} href={`/bibliotheque/document?id=${encodeURIComponent(d.id)}`} className="group flex overflow-hidden rounded-xl2 border border-paper-line bg-white shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+                    <DocThumb docId={d.id} format={d.format} className="w-[108px] shrink-0 border-r border-paper-line sm:w-[132px]" />
+                    <div className="min-w-0 flex-1 p-4 sm:p-5">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] font-medium uppercase tracking-wide text-ink-mute">
+                      <span>{tr(d.natureLabel)}</span><span>·</span><span>{d.pageCount} {d.locatorType}{d.pageCount > 1 ? "s" : ""}</span><span>·</span><span>{d.date}</span>
                     </div>
                     <h3 className="mt-1.5 text-[15px] font-semibold leading-snug text-ink group-hover:text-caritas-red">{d.title}</h3>
                     <p className="mt-1 text-[13px] leading-relaxed text-ink-soft">{d.description}</p>
                     {d.note && <p className="mt-2 rounded-md bg-caritas-beige/40 px-2.5 py-1.5 text-[12px] text-ink-soft">{d.note}</p>}
+                    </div>
                   </Link>
                 ))}
               </div>

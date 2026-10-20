@@ -50,6 +50,8 @@ export interface KnowledgeData {
   pages: Record<string, PageText[]>;
   /** docId -> nom du fichier chiffré de l'original */
   files: Record<string, string>;
+  /** docId -> fichiers chiffrés d'affichage : PDF (original ou conversion) et vignette */
+  views?: Record<string, { pdf?: string; thumb?: string }>;
 }
 
 export type Lang = "fr" | "en";

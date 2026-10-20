@@ -7,7 +7,7 @@ import { getDocument } from "@/lib/knowledge";
 import { tr } from "@/lib/i18n";
 
 /** Déchiffre l'original dans le navigateur, puis l'ouvre (PDF) ou le télécharge (Office). */
-export function OriginalButton({ docId, page, variant = "primary", children }: { docId: string; page?: number | null; variant?: "primary" | "link"; children?: React.ReactNode }) {
+export function OriginalButton({ docId, page, variant = "primary", children }: { docId: string; page?: number | null; variant?: "primary" | "secondary" | "link"; children?: React.ReactNode }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const doc = getDocument(docId);
@@ -50,10 +50,12 @@ export function OriginalButton({ docId, page, variant = "primary", children }: {
         className={clsx(
           variant === "primary"
             ? "inline-flex items-center gap-2 rounded-xl bg-caritas-red px-4 py-2 text-[13.5px] font-medium text-white transition hover:bg-[#c90714] disabled:opacity-60"
+            : variant === "secondary"
+            ? "inline-flex items-center gap-2 rounded-xl border border-paper-line bg-white px-3.5 py-2 text-[13px] font-medium text-ink transition hover:border-ink-faint disabled:opacity-60"
             : "normal-case tracking-normal text-ink-soft underline underline-offset-2 hover:text-ink disabled:opacity-60",
         )}
       >
-        {busy && variant === "primary" && <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white" />}
+        {busy && variant !== "link" && <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent opacity-70" />}
         {busy && variant === "link" ? tr("ouverture…") : label}
       </button>
       {err && <span className="mt-1 text-[12px] text-caritas-red">{err}</span>}

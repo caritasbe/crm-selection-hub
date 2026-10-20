@@ -11,6 +11,11 @@ const nextConfig = {
   images: { unoptimized: true },
   poweredByHeader: false,
   reactStrictMode: true,
+  webpack(config) {
+    // PDF.js : module natif « canvas » inutile dans le navigateur
+    config.resolve.alias = { ...config.resolve.alias, canvas: false };
+    return config;
+  },
 };
 
 export default nextConfig;

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
+import clsx from "clsx";
 import { useSearchParams } from "next/navigation";
 import { Card, VendorDot } from "@/components/ui";
 import { getDocument, getPages, NATURE_LABELS } from "@/lib/knowledge";
@@ -11,6 +12,8 @@ import { HighlightText } from "@/components/HighlightText";
 import { OriginalButton } from "@/components/OriginalButton";
 import { useTitle } from "@/lib/use-title";
 import { tr } from "@/lib/i18n";
+import { PdfViewer } from "@/components/PdfViewer";
+import { hasViewPdf } from "@/lib/vault";
 
 export default function DocPage() {
   return (
@@ -26,13 +29,18 @@ function Doc() {
   useTitle(doc?.title ?? "Document", false);
   const target = Number(params.get("page")) || null;
   const query = params.get("q") ?? undefined;
+  // Les numéros de page correspondent à ceux du PDF pour les PDF et les présentations ;
+  // pour les classeurs (onglets) et les documents Word (sections), on ouvre le texte à la bonne section.
+  const pagesMatchPdf = doc?.format === "pdf" || doc?.format === "pptx";
+  const canView = !!doc && hasViewPdf(doc.id);
+  const [mode, setMode] = useState<"doc" | "text">(() => (canView && !query && (!target || pagesMatchPdf) ? "doc" : "text"));
 
   // Défilement vers la page citée une fois le texte affiché
   useEffect(() => {
-    if (!target) return;
+    if (!target || mode !== "text") return;
     const el = document.getElementById(`p${target}`);
     if (el) requestAnimationFrame(() => el.scrollIntoView({ block: "start" }));
-  }, [target, doc?.id]);
+  }, [target, doc?.id, mode]);
 
   if (!doc) {
     return (
@@ -60,11 +68,26 @@ function Doc() {
         </div>
         <p className="mt-4 max-w-3xl text-[14px] leading-relaxed text-ink-soft">{doc.description}</p>
         {doc.note && <p className="mt-3 max-w-3xl rounded-lg border border-caritas-orange/30 bg-caritas-beige/40 px-3.5 py-2.5 text-[13px] text-ink">{doc.note}</p>}
-        <div className="mt-5 flex flex-wrap gap-2">
-          <OriginalButton docId={doc.id} page={doc.format === "pdf" ? target : null} />
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          {canView && (
+            <div className="inline-flex rounded-xl bg-paper-deep p-1" role="tablist">
+              {([["doc", tr("Document")], ["text", tr("Texte extrait")]] as const).map(([m, l]) => (
+                <button key={m} role="tab" aria-selected={mode === m} onClick={() => setMode(m)} className={clsx("rounded-lg px-3.5 py-1.5 text-[13px] transition", mode === m ? "bg-white font-medium text-ink shadow-card" : "text-ink-soft hover:text-ink")}>
+                  {l}
+                </button>
+              ))}
+            </div>
+          )}
+          <OriginalButton docId={doc.id} page={doc.format === "pdf" ? target : null} variant="secondary" />
         </div>
+        {query && canView && mode === "doc" && (
+          <p className="mt-3 text-[12.5px] text-ink-mute">{tr("Les termes recherchés sont surlignés dans l'onglet « Texte extrait ».")}</p>
+        )}
       </header>
 
+      {mode === "doc" ? (
+        <PdfViewer docId={doc.id} page={pagesMatchPdf ? target : null} />
+      ) : (
       <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
         <nav aria-label="Pages" className="no-print hidden lg:block">
           <div className="sticky top-8 max-h-[calc(100vh-4rem)] overflow-y-auto pr-2 scrollbar-thin">
@@ -95,6 +118,7 @@ function Doc() {
           ))}
         </div>
       </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 # Mettre à jour le dossier
 
-Prérequis : Node 20 ou plus, Python 3 avec `python-docx`, `python-pptx`, `openpyxl` et `pdftotext` (poppler) si l'on ajoute des documents, et le mot de passe.
+Prérequis : Node 20 ou plus et le mot de passe. Pour ajouter des documents : Python 3 avec `python-docx`, `python-pptx`, `openpyxl`, poppler (`pdftotext`, `pdftoppm`) et LibreOffice (conversion en PDF des fichiers Office pour l'affichage dans la bibliothèque).
 
 ## 1. Récupérer les données en clair
 
@@ -15,7 +15,7 @@ Les données sont restaurées dans `private/`, dossier exclu de Git.
 ## 2. Modifier
 
 - **Fiches, comparateur, finances, questions** : `private/data/*.ts`. Chaque information garde ses sources (`{ doc, page }`).
-- **Nouveau document** : le déposer dans `private/documents/…`, l'ajouter à `private/manifest.json`, puis `npm run ingest`.
+- **Nouveau document** : le déposer dans `private/documents/…`, l'ajouter à `private/manifest.json`, puis `npm run ingest` (texte, index de recherche, version PDF d'affichage et vignette).
 
 ## Version anglaise
 

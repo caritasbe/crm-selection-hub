@@ -9,3 +9,4 @@ next-env.d.ts
 # Seule leur version chiffrée (public/vault/) est publiée.
 private/
 tests/_probe*.ts
+public/pdf.worker.min.mjs

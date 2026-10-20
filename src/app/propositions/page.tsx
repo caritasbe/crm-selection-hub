@@ -11,6 +11,7 @@ import type { VendorId } from "@/data/types";
 import { resolveRefs } from "@/lib/refs";
 import { getDocument, NATURE_LABELS } from "@/lib/knowledge";
 import { useTitle } from "@/lib/use-title";
+import { DocThumb } from "@/components/DocThumb";
 import { tr } from "@/lib/i18n";
 
 const SECTIONS = [
@@ -187,10 +188,13 @@ function Proposition() {
                 if (!doc) return null;
                 return (
                   <Link key={d} href={`/bibliotheque/document?id=${encodeURIComponent(d)}`} className="group">
-                    <Card className="h-full p-4 transition group-hover:shadow-lift">
+                    <Card className="flex h-full overflow-hidden transition group-hover:shadow-lift">
+                      <DocThumb docId={doc.id} format={doc.format} className="w-[84px] shrink-0 border-r border-paper-line" />
+                      <div className="min-w-0 flex-1 p-4">
                       <div className="text-[11.5px] font-medium uppercase tracking-wide text-ink-mute">{tr(NATURE_LABELS[doc.nature])} · {doc.format.toUpperCase()} · {doc.pageCount} {doc.locatorType}{doc.pageCount > 1 ? "s" : ""}</div>
                       <div className="mt-1 text-[14px] font-medium text-ink group-hover:text-caritas-red">{doc.title}</div>
                       {doc.note && <p className="mt-1 text-[12px] text-ink-mute">{doc.note}</p>}
+                      </div>
                     </Card>
                   </Link>
                 );
