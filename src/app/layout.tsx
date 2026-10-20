@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: { default: "CARITAS · CRM Selection Hub", template: "%s · CRM Selection Hub" },
   description: "Espace de consultation du comité de sélection CRM.",
   robots: { index: false, follow: false },
-  icons: { icon: `${base}/icon.svg` },
+  icons: { icon: `${base}/caritas-mark.png`, apple: `${base}/caritas-mark.png` },
 };
 
 export const viewport: Viewport = { themeColor: "#FBF8F6", width: "device-width", initialScale: 1 };

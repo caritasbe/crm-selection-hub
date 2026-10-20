@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { lock as lockVault, unlockFromStorage, unlockWithPassword, WrongPasswordError } from "@/lib/vault";
 import { SEALED_AT } from "@/data/store";
 import { LangSwitch, useT } from "@/lib/i18n";
+import { BASE_PATH } from "@/lib/vault";
 
 type Status = "boot" | "locked" | "ready";
 const VaultCtx = createContext<{ lock: () => void; sealedAt: string }>({ lock: () => {}, sealedAt: "" });
@@ -29,11 +30,8 @@ export function VaultGate({ children }: { children: React.ReactNode }) {
 }
 
 function Mark({ size = 44 }: { size?: number }) {
-  return (
-    <span className="grid place-items-center rounded-2xl bg-caritas-red font-bold text-white shadow-lift" style={{ width: size, height: size, fontSize: size * 0.42 }}>
-      C
-    </span>
-  );
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={`${BASE_PATH}/caritas-mark.png`} alt="Caritas" width={size} height={size} style={{ width: size, height: size }} />;
 }
 
 function Boot() {
@@ -87,13 +85,13 @@ function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
       <div aria-hidden className="pointer-events-none absolute right-1/4 top-10 h-40 w-40 rounded-full bg-caritas-fuchsia/10 blur-2xl" />
 
       <main className="relative w-full max-w-[420px]">
-        <div className="mb-8 flex items-center gap-3">
-          <Mark />
-          <div className="leading-tight">
-            <div className="text-[14px] font-bold tracking-[0.14em] text-ink">CARITAS</div>
-            <div className="text-[12px] font-medium tracking-[0.1em] text-ink-mute">CRM SELECTION HUB</div>
+        <div className="mb-8 flex items-end justify-between gap-3">
+          <div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`${BASE_PATH}/caritas-logo.png`} alt="Caritas International" className="h-11 w-auto" />
+            <div className="mt-2 text-[12px] font-semibold tracking-[0.14em] text-ink-mute">CRM SELECTION HUB</div>
           </div>
-          <LangSwitch className="ml-auto" />
+          <LangSwitch />
         </div>
 
         <form

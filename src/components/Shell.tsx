@@ -8,6 +8,7 @@ import { useVault } from "./VaultGate";
 import { openPalette } from "./CommandPalette";
 import { startTour } from "./Tour";
 import { LangSwitch, useLang } from "@/lib/i18n";
+import { BASE_PATH } from "@/lib/vault";
 
 const NAV = [
   { href: "/", label: "Accueil", icon: "M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z" },
@@ -66,12 +67,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
   );
 
   const brand = (
-    <Link href="/" className="flex items-center gap-2.5">
-      <span className="grid h-8 w-8 place-items-center rounded-lg bg-caritas-red text-[15px] font-bold text-white">C</span>
-      <span className="leading-tight">
-        <span className="block text-[13px] font-bold tracking-[0.12em] text-ink">CARITAS</span>
-        <span className="block text-[11px] font-medium tracking-[0.08em] text-ink-mute">CRM SELECTION HUB</span>
-      </span>
+    <Link href="/" className="block leading-none" aria-label="CRM Selection Hub">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={`${BASE_PATH}/caritas-logo.png`} alt="Caritas International" className="h-9 w-auto" />
+      <span className="mt-1.5 block text-[10.5px] font-semibold tracking-[0.14em] text-ink-mute">CRM SELECTION HUB</span>
     </Link>
   );
 
