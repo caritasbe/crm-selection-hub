@@ -34,6 +34,11 @@ async function main() {
   fs.writeFileSync(path.join(dir, "missing.json"), JSON.stringify(missing, null, 1));
   const unused = Object.keys(en).filter((k) => !all.has(k));
   console.log(`${all.size} textes ; ${missing.length} sans traduction (private/i18n/missing.json) ; ${unused.length} traductions inutilisées.`);
+  if (process.argv.includes("--prune") && unused.length) {
+    for (const k of unused) delete en[k];
+    fs.writeFileSync(enPath, JSON.stringify(en, null, 1));
+    console.log(`${unused.length} traductions inutilisées supprimées.`);
+  }
   if (process.argv.includes("--strict") && missing.length) process.exit(1);
 }
 main();
