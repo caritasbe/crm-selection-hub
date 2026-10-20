@@ -172,11 +172,11 @@ export function Tour() {
     return () => { window.removeEventListener("crmhub:tour", open); if (timer) clearTimeout(timer); };
   }, []);
 
-  const close = useCallback((goExplore = false) => {
+  const close = useCallback((goHome = false) => {
     try { localStorage.setItem(DONE_KEY, "1"); } catch {}
     setStep(null);
     setRect(null);
-    if (goExplore) router.push("/explorer");
+    if (goHome) router.push("/", { scroll: true });
   }, [router]);
 
   const s = step === null ? null : STEPS[step];
@@ -267,7 +267,7 @@ export function Tour() {
             <button onClick={() => setStep(step - 1)} className="rounded-xl border border-paper-line px-3.5 py-2 text-[13.5px] font-medium text-ink-soft hover:border-ink-faint hover:text-ink">{t("Précédent")}</button>
           )}
           {last ? (
-            <button onClick={() => close(true)} className="rounded-xl bg-caritas-red px-4 py-2 text-[13.5px] font-medium text-white hover:bg-[#c90714]">{t("Commencer par Explorer")}</button>
+            <button onClick={() => close(true)} className="rounded-xl bg-caritas-red px-4 py-2 text-[13.5px] font-medium text-white hover:bg-[#c90714]">{t("Terminer et revenir à l'accueil")}</button>
           ) : (
             <button autoFocus onClick={() => setStep(step + 1)} className="rounded-xl bg-caritas-red px-4 py-2 text-[13.5px] font-medium text-white hover:bg-[#c90714]">{step === 0 ? t("Commencer") : t("Suivant")}</button>
           )}

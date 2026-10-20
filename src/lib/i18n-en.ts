@@ -271,7 +271,7 @@ export const UI_EN: Record<string, string> = {
   "Précédent": "Back",
   "Suivant": "Next",
   "Commencer": "Start",
-  "Commencer par Explorer": "Start with Explore",
+  "Terminer et revenir à l'accueil": "Finish and go back home",
   "Bienvenue dans le CRM Selection Hub": "Welcome to the CRM Selection Hub",
   "Toutes les offres reçues et les documents du projet, réunis en un seul endroit. La visite ouvre chaque rubrique et montre ce que l'on peut y faire, en un peu plus de deux minutes.": "Every offer received and every project document, in one place. The tour opens each section and shows what you can do there, in just over two minutes.",
   "L'outil restitue le contenu des documents, sans recommander de solution.": "The tool presents what the documents say, without recommending a solution.",
